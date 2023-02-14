@@ -1,0 +1,70 @@
+﻿@page "/BooksPage"
+@using WebbDesignBlazorLabb3.Shared;
+
+<h3 class="text-center">Alla böcker</h3>
+<div class="d-inline-flex flex-wrap">
+
+<Virtualize Items="Books" Context="book">
+	<div class="col-2 pb-lg-2 p-lg-2">
+			<div class="card mt-4">
+				<div class="card-header">
+					<h5 class="text-center mt-3">@book.Title</h5>
+				</div>
+				<div class="card-body text-center mt-2">
+					<img src="http://books.google.com/books/content?id=nfCaDgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" class="mx-auto mt-3 align-content-center" />
+					<h5 class="card-title">@book.Author</h5>
+					<p class="card-text">
+						Beskrivning @book.Description
+					</p>
+				</div>
+				<button class="btn btn-success mt-4">@book.Price kr</button>
+			</div>
+		</div>
+</Virtualize>
+
+</div>
+
+@*	@foreach (var book in Books)
+	{
+
+		<div class="col-2 p-3 flex-shrink-1 bd-highlight">
+			<div class="card mt-4">
+				<div class="card-header">
+					<h5 class="text-center mt-3">@book.Title</h5>
+				</div>
+				<div class="card-body text-center mt-2">
+					<img src="http://books.google.com/books/content?id=nfCaDgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" class="mx-auto mt-3 align-content-center" />
+					<h5 class="card-title">@book.Author</h5>
+					<p class="card-text">
+						Beskrivning @book.Description
+					</p>
+				</div>
+				<button class="btn btn-success mt-4">@book.Price kr</button>
+			</div>
+		</div>
+
+	}*@
+
+
+
+
+@code {
+
+    public List<Book> Books = new List<Book> {
+            new Book(123, "Sagor som är sådär", "En sköj bok", "Jan stenmark", 950),
+            new Book(124, "test1", "testdesc1", "patric", 50),
+            new Book(125, "test2", "testdesc2", "patric", 1500),
+            new Book(126, "test3", "testdesc3", "patric", 1800),
+            new Book(127, "test4", "testdesc4", "patric", 1600),
+            new Book(128, "test5", "testdesc5", "patric", 9),
+			new Book(128, "test7", "testdesc5", "patric", 12000),
+			new Book(128, "test5", "testdesc5", "patric", 9),
+			new Book(128, "test5", "testdesc5", "patric", 9),
+			new Book(128, "test5", "testdesc5", "patric", 9),
+			new Book(128, "test5", "testdesc5", "patric", 9),
+			new Book(128, "test5", "testdesc5", "patric", 9),
+			new Book(128, "test5", "testdesc5", "patric", 9),
+			new Book(128, "test5", "testdesc5", "patric", 9),
+			};
+
+}
