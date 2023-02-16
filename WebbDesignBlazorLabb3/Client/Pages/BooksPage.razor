@@ -1,26 +1,28 @@
 ﻿@page "/BooksPage"
+@using Newtonsoft.Json;
 @using WebbDesignBlazorLabb3.Shared;
+
+@inject HttpClient client;
 
 <h3 class="text-center">Alla böcker</h3>
 <div class="d-inline-flex flex-wrap">
-
-<Virtualize Items="Books" Context="book">
-	<div class="col-2 pb-lg-2 p-lg-2">
+	<Virtualize Items="Books" Context="book">
+		<div class="col-2 pb-lg-2 p-lg-2">
 			<div class="card mt-4">
 				<div class="card-header">
-					<h5 class="text-center mt-3">@book._title</h5>
+					<h5 class="text-center mt-3 text-truncate">@book._title</h5>
 				</div>
 				<div class="card-body text-center mt-2">
-					<img src="http://books.google.com/books/content?id=nfCaDgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" class="mx-auto mt-3 align-content-center" />
+					<img src="@GetThumbnail(book._isbn).ToString()" class="mx-auto mt-3 align-content-center" />
 					<h5 class="card-title">@book._author</h5>
-					<p class="card-text">
+					<p class="card-text text-truncate">
 						Beskrivning @book._Description
 					</p>
 				</div>
 				<button class="btn btn-success mt-4">@book._price kr</button>
 			</div>
 		</div>
-</Virtualize>
+	</Virtualize>
 
 </div>
 
@@ -50,23 +52,73 @@
 
 @code {
 
+	public string imgLink { get; set; } 
+
+
 	public List<BookDto> Books = new List<BookDto> {
-            new BookDto(123, "Sagor som är sådär", "En sköj bok", "Jan stenmark", 500, 950),
-			new BookDto(124, "test1", "testdesc1", "patric",500, 50),
-			new BookDto(125, "test2", "testdesc2", "patric",500, 1500),
-			new BookDto(126, "test3", "testdesc3", "patric",500, 1800),
-			new BookDto(127, "test4", "testdesc4", "patric",500, 1600),
-			new BookDto(128, "test5", "testdesc5", "patric",500, 9),
-			new BookDto(128, "test7", "testdesc5", "patric",500, 12000),
-			new BookDto(128, "test5", "testdesc5", "patric",500, 9),
-			new BookDto(128, "test5", "testdesc5", "patric",500, 9),
-			new BookDto(128, "test5", "testdesc5", "patric",500, 9),
-			new BookDto(128, "test5", "testdesc5", "patric",500, 9),
-			new BookDto(128, "test5", "testdesc5", "patric",500, 9),
-			new BookDto(128, "test5", "testdesc5", "patric",500, 9),
-			new BookDto(128, "test5", "testdesc5", "patric",500, 9),
+			new BookDto(123, "Sagor som är sådär", "En sköj bok", "Jan stenmark", 500, 950),
+			new BookDto(9780434020942, "Angelmaker", "testdesc1", "patric",500, 50),
+			new BookDto(9780593082959, "Losing Eden", "testdesc2", "patric",500, 1500),
+			new BookDto(9780593535158, "The Magic Kingdom", "testdesc3", "patric",500, 1800),
+			new BookDto(9781484278680, "Pro C# 10 with .NET 6", "testdesc4", "patric",500, 1600),
+			new BookDto(9781644734780, "Violeta (Spanish Edition)", "testdesc5", "patric",500, 9),
+			new BookDto(9781893115262, "Visual Basic .NET and the .NET Platform: An Advanced Guide", "testdesc5", "patric",500, 12000),
+			new BookDto(9789175152820, "En mystisk hemmakväll", "testdesc5", "patric",500, 9),
+			new BookDto(9789189015562, "En del har det bra", "testdesc5", "patric",500, 9),
+			new BookDto(9789189603202, "En bra plats i skallen", "testdesc5", "patric",500, 9),
+			new BookDto(9789189632646, "Storpack", "testdesc5", "patric",500, 9),
+			new BookDto(9789511414650, "Tuhkaan piirretty maa", "testdesc5", "patric",500, 9),
+			new BookDto(9781484278680, "Pro C# 10 with .NET 6", "testdesc4", "patric",500, 1600)
 			};
 
+	private async Task<string> GetThumbnail(long isbn)
+	{
+
+		HttpResponseMessage response = await client.GetAsync($"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}");
+		response.EnsureSuccessStatusCode();
+		var responseBody = await response.Content.ReadAsStringAsync();
+		var result = JsonConvert.DeserializeObject<Root>(responseBody);
+
+		string thumbnailParsed = null;
+		foreach (var item in result.items)
+		{
+			thumbnailParsed = item.volumeInfo.imageLinks.thumbnail;
+		}
+			thumbnailParsed = thumbnailParsed.Replace("\"", "");
+
+		if (thumbnailParsed == null)
+		{
+			return "https://via.placeholder.com/150x150";
+		}
+		else
+		{
+			return thumbnailParsed;
+
+		}
+
+	}
+
+	public class ImageLinks
+	{
+		public string smallThumbnail { get; set; }
+		public string thumbnail { get; set; }
+	}
 
 
+	public class Item
+	{
+		public VolumeInfo volumeInfo { get; set; }
+	}
+
+
+	public class Root
+	{
+		public List<Item> items { get; set; }
+	}
+
+	public class VolumeInfo
+	{
+		public ImageLinks imageLinks { get; set; }
+
+	}
 }

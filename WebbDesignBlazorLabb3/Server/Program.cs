@@ -55,7 +55,7 @@ app.MapGet("/GetBookThumbnail", async () => {
 		thumbnailParsed = item.volumeInfo.imageLinks.thumbnail;
 	}
 	thumbnailParsed = thumbnailParsed.Replace("\"", "");
-	return Results.Ok(thumbnailParsed);
+	return thumbnailParsed;
 });
 
 
@@ -67,11 +67,6 @@ app.MapGet("/GetBookThumbnail", async () => {
 app.MapFallbackToFile("index.html");
 
 app.Run();
-
-public class bookTest
-{
-	public Dictionary<string, object> items { get; set; }
-}
 
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
 public class ImageLinks

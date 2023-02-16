@@ -6,7 +6,7 @@ namespace WebbDesignBlazorLabb3.Server.DataAccess.Models;
 public class BookModel
 {
     [BsonId]
-    public int Isbn { get; set; }
+    public long Isbn { get; set; }
     [BsonElement]
     public string Title { get; set; }
     [BsonElement]
