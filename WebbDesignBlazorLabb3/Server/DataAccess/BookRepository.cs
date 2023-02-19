@@ -1,6 +1,8 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using WebbDesignBlazorLabb3.Server.DataAccess.Models;
 using WebbDesignBlazorLabb3.Shared;
+using static WebbDesignBlazorLabb3.Client.Pages.BooksPage;
 
 namespace WebbDesignBlazorLabb3.Server.DataAccess;
 
@@ -18,7 +20,7 @@ public class BookRepository : IRepository<BookDto>
         var client = new MongoClient(connectionString);
         var database = client.GetDatabase(databaseName);
         _bookCollection = database.GetCollection<BookModel>
-            ("Books", new() { AssignIdOnInsert = true });
+            ("Books");
     }
 
 
@@ -26,14 +28,14 @@ public class BookRepository : IRepository<BookDto>
     {
         await _bookCollection.InsertOneAsync(new BookModel()
         {
-            Isbn = entity._isbn,
-            Title = entity._title,
-            Author = entity._author,
-            Description = entity._Description,
-            Pages = entity._pages,
-            Price = entity._price
-
-        });
+            Isbn = entity.Isbn,
+            Title = entity.Title,
+            Author = entity.Author,
+            Description = entity.Description,
+            Pages = entity.Pages,
+            Price = entity.Price,
+			ImageLink = entity.ImageLink
+		});
     }
     public async Task<IEnumerable<BookDto>> GetAllAsync()
     {
@@ -43,19 +45,21 @@ public class BookRepository : IRepository<BookDto>
         return allBooks.ToEnumerable()
             .Select(b => new BookDto()
             {
-                _isbn = b.Isbn,
-                _author = b.Author,
-                _title = b.Title,
-                _Description = b.Description,
-                _pages = b.Pages,
-                _price = b.Price,
-            });
+                Isbn = b.Isbn,
+                Author = b.Author,
+                Title = b.Title,
+                Description = b.Description,
+                Pages = b.Pages,
+                Price = b.Price,
+				ImageLink = b.ImageLink
+			});
     }
 
-    public Task DeleteAsync(object id)
+    public async Task DeleteAsync(object id)
     {
-        throw new NotImplementedException();
-    }
+		var deleteFilter = Builders<BookModel>.Filter.Eq("Isbn", id);
+		await _bookCollection.DeleteOneAsync(deleteFilter);
+	}
 
 
     public Task<BookDto> GetAsync(object id)

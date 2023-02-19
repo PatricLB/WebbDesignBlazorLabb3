@@ -9,23 +9,23 @@ namespace WebbDesignBlazorLabb3.Shared;
 
 public class BookDto
 {
-	public long _isbn { get; set; }
-	public string _title { get; set; }
-	public string _Description { get; set; }
-	public string _author { get; set; }
-	public int _pages { get; set; }
-	public int _price { get; set; }
+	public long Isbn { get; set; }
+	public string Title { get; set; }
+	public string Description { get; set; }
+	public string Author { get; set; }
+	public int Pages { get; set; }
+	public int Price { get; set; }
 
-	public string _imageLink;
+	public string ImageLink { get; set; }
 
 	public BookDto(long isbn, string title, string desc, string auth, int pages, int price)
 	{
-		_isbn = isbn;
-		_title = title;
-		_Description = desc;
-		_author = auth;
-		_pages = pages;
-		_price = price;
+		Isbn = isbn;
+		Title = title;
+		Description = desc;
+		Author = auth;
+		Pages = pages;
+		Price = price;
 	}
 	public BookDto() 
 	{ 

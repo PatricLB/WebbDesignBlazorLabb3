@@ -1,0 +1,99 @@
+﻿@page "/AddBook"
+@using Microsoft.Extensions.Logging
+@using Newtonsoft.Json;
+@using WebbDesignBlazorLabb3.Shared;
+@using static WebbDesignBlazorLabb3.Client.Pages.BooksPage;
+
+@inject HttpClient client;
+
+<h3>Add a Book!</h3>
+
+<EditForm Model="@bookToAdd" OnSubmit="@BookSubmit">
+
+    <div class="form-group row">
+        <label for="inputISBN" class="col-md-2 col-form-label-lg">
+            ISBN:
+        </label>
+        <div class="col-sm-4 mb-4">
+            <InputNumber id="inputISBN" class="form-control" placeholder="ISBN" @bind-Value="bookToAdd.Isbn" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="inputTitle" class="col-sm-2 col-form-label-lg">
+            Title:
+        </label>
+            <div class="col-sm-4 mb-4">
+            <InputText id="inputTitle" class="form-control" placeholder="Title" @bind-Value="bookToAdd.Title" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="inputDesc" class="col-sm-2 col-form-label-lg">
+            Description:
+        </label>
+            <div class="col-sm-4 mb-4">
+            <InputText id="inputDesc" class="form-control" placeholder="Description" @bind-Value="bookToAdd.Description" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="inputAuth" class="col-sm-2 col-form-label-lg">
+            Author:
+        </label>
+            <div class="col-sm-4 mb-4">
+            <InputText id="inputAuth" class="form-control" placeholder="Author" @bind-Value="bookToAdd.Author" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="inputPages" class="col-sm-2 col-form-label-lg">
+            Pages:
+        </label>
+            <div class="col-sm-4 mb-4">
+            <InputNumber id="inputPages" class="form-control" placeholder="Pages" @bind-Value="bookToAdd.Pages" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="inputPrice" class="col-sm-2 col-form-label-lg">
+            Price:
+        </label>
+            <div class="col-sm-4 mb-4">
+            <InputNumber id="inputPrice" class="form-control" placeholder="Price" @bind-Value="bookToAdd.Price" />
+        </div>
+    </div>
+    <button type="Submit" class="btn btn-success">Submit</button>
+
+</EditForm>
+
+
+
+@code {
+    //test ISBN
+    //9780141184944
+    BookDto bookToAdd = new ();
+    
+    private async void BookSubmit()
+    {
+        await GetThumbnail(bookToAdd.Isbn);
+        Console.WriteLine(bookToAdd.Title);
+
+        //Skriv mer kod för att faktiskt lägga till i databasen.
+    }
+
+
+	private async Task GetThumbnail(long isbn)
+	{
+
+		HttpResponseMessage response = await client.GetAsync($"https://localhost:7294/GetBookThumbnail:{isbn}");
+		response.EnsureSuccessStatusCode();
+		var responseBody = await response.Content.ReadAsStringAsync();
+		if (responseBody.ToString() == "No image available")
+		{
+			bookToAdd.ImageLink = "https://via.placeholder.com/125x150.png";
+			Console.WriteLine(bookToAdd.ImageLink);
+		}
+		else
+		{
+			bookToAdd.ImageLink = responseBody.ToString();
+			Console.WriteLine(bookToAdd.ImageLink);
+
+		}
+	}
+}

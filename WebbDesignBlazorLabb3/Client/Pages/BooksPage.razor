@@ -10,25 +10,23 @@
 		<div class="col-2 pb-lg-2 p-lg-2">
 			<div class="card mt-4">
 				<div class="card-header">
-					<h5 class="text-center mt-3 text-truncate">@book._title</h5>
+					<h5 class="text-center mt-3 text-truncate">@book.Title</h5>
 				</div>
 				<div class="card-body text-center mt-2">
-					<img src="@GetThumbnail(book._isbn).ToString()" class="mx-auto mt-3 align-content-center" />
-					<h5 class="card-title">@book._author</h5>
+					<img src="@GetThumbnail(book.Isbn).ToString()" class="mx-auto mt-3 align-content-center" />
+					<h5 class="card-title">@book.Author</h5>
 					<p class="card-text text-truncate">
-						Beskrivning @book._Description
+						Beskrivning @book.Description
 					</p>
 				</div>
-				<button class="btn btn-success mt-4">@book._price kr</button>
+				<button class="btn btn-success mt-4">@book.Price kr</button>
 			</div>
 		</div>
 	</Virtualize>
-
 </div>
 
 @*	@foreach (var book in Books)
 	{
-
 		<div class="col-2 p-3 flex-shrink-1 bd-highlight">
 			<div class="card mt-4">
 				<div class="card-header">
@@ -45,7 +43,7 @@
 			</div>
 		</div>
 
-	}*@
+}*@
 
 
 
@@ -71,20 +69,22 @@
 			new BookDto(9781484278680, "Pro C# 10 with .NET 6", "testdesc4", "patric",500, 1600)
 			};
 
+
+
+	//Quick draft för proof of concept
 	private async Task<string> GetThumbnail(long isbn)
 	{
 
 		HttpResponseMessage response = await client.GetAsync($"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}");
 		response.EnsureSuccessStatusCode();
 		var responseBody = await response.Content.ReadAsStringAsync();
-		var result = JsonConvert.DeserializeObject<Root>(responseBody);
+		var result = JsonConvert.DeserializeObject<GoogleBooksJsonRoot>(responseBody);
 
 		string thumbnailParsed = null;
 		foreach (var item in result.items)
 		{
 			thumbnailParsed = item.volumeInfo.imageLinks.thumbnail;
 		}
-			thumbnailParsed = thumbnailParsed.Replace("\"", "");
 
 		if (thumbnailParsed == null)
 		{
@@ -111,7 +111,7 @@
 	}
 
 
-	public class Root
+	public class GoogleBooksJsonRoot
 	{
 		public List<Item> items { get; set; }
 	}

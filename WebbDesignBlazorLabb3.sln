@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebbDesignBlazorLabb3.Server", "WebbDesignBlazorLabb3\Server\WebbDesignBlazorLabb3.Server.csproj", "{5325C429-8AD7-42DE-8B45-5FAECDFD8AFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebbDesignBlazorLabb3.Server", "WebbDesignBlazorLabb3\Server\WebbDesignBlazorLabb3.Server.csproj", "{5325C429-8AD7-42DE-8B45-5FAECDFD8AFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebbDesignBlazorLabb3.Client", "WebbDesignBlazorLabb3\Client\WebbDesignBlazorLabb3.Client.csproj", "{6F30CB81-82EA-44F9-B4CD-9A642A6C39AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebbDesignBlazorLabb3.Client", "WebbDesignBlazorLabb3\Client\WebbDesignBlazorLabb3.Client.csproj", "{6F30CB81-82EA-44F9-B4CD-9A642A6C39AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebbDesignBlazorLabb3.Shared", "WebbDesignBlazorLabb3\Shared\WebbDesignBlazorLabb3.Shared.csproj", "{DCED4EF2-D03C-4138-A95C-CF36584A6D03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebbDesignBlazorLabb3.Shared", "WebbDesignBlazorLabb3\Shared\WebbDesignBlazorLabb3.Shared.csproj", "{DCED4EF2-D03C-4138-A95C-CF36584A6D03}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

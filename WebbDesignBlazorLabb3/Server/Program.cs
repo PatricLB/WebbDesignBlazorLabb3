@@ -42,23 +42,31 @@ app.MapRazorPages();
 
 //API funktioner
 
-app.MapGet("/GetBookThumbnail", async () => {
-	HttpClient client = new HttpClient();
-	HttpResponseMessage response = await client.GetAsync($"https://www.googleapis.com/books/v1/volumes?q=isbn:9780141184944");
-	response.EnsureSuccessStatusCode();
-	var responseBody = await response.Content.ReadAsStringAsync();
-	var result = JsonConvert.DeserializeObject<Root>(responseBody);
+app.MapGet("/GetBookThumbnail:{isbn}", async (long isbn) =>
+{
+    HttpClient client = new HttpClient();
+    HttpResponseMessage response = await client.GetAsync($"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}");
+    response.EnsureSuccessStatusCode();
+    var responseBody = await response.Content.ReadAsStringAsync();
+    var result = JsonConvert.DeserializeObject<Root>(responseBody);
 
-	string thumbnailParsed = string.Empty;
-	foreach (var item in result.items)
-	{
-		thumbnailParsed = item.volumeInfo.imageLinks.thumbnail;
-	}
-	thumbnailParsed = thumbnailParsed.Replace("\"", "");
-	return thumbnailParsed;
+    string thumbnailParsed = string.Empty;
+    foreach (var item in result.items)
+    {
+        if (item.volumeInfo.imageLinks == null)
+        {
+            return "No image available";
+        }
+        else
+        {
+            thumbnailParsed = item.volumeInfo.imageLinks.thumbnail;
+        }
+    }
+
+    return thumbnailParsed;
 });
 
-
+//9780141184944
 
 
 // Ifall jag behöver en Hub till projectet är det klart
