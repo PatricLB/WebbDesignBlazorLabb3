@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Rewrite;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using WebbDesignBlazorLabb3.Server.DataAccess;
 using WebbDesignBlazorLabb3.Server.Hubs;
 using WebbDesignBlazorLabb3.Shared;
+using static WebbDesignBlazorLabb3.Server.DataAccess.ParseBookBaseClass;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,7 +46,7 @@ app.MapRazorPages();
 
 app.MapGet("/GetBookThumbnail:{isbn}", async (long isbn) =>
 {
-    HttpClient client = new HttpClient();
+    HttpClient client = new ();
     HttpResponseMessage response = await client.GetAsync($"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}");
     response.EnsureSuccessStatusCode();
     var responseBody = await response.Content.ReadAsStringAsync();
@@ -62,12 +64,41 @@ app.MapGet("/GetBookThumbnail:{isbn}", async (long isbn) =>
             thumbnailParsed = item.volumeInfo.imageLinks.thumbnail;
         }
     }
-
+    Console.WriteLine(thumbnailParsed);
     return thumbnailParsed;
 });
 
-//9780141184944
+app.MapGet("/GetBookInfo:{isbn}", async (long isbn) =>
+{
+    HttpClient client = new HttpClient();
+    HttpResponseMessage response = await client.GetAsync($"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}");
+    response.EnsureSuccessStatusCode();
+    var responseBody = await response.Content.ReadAsStringAsync();
+    var result = JsonConvert.DeserializeObject<Root>(responseBody);
+    BookDto returnBook = new();
 
+    returnBook.Title = result.items[0].volumeInfo.title;
+    returnBook.Author = result.items[0].volumeInfo.authors[0];
+    returnBook.Pages = result.items[0].volumeInfo.pageCount;
+
+    if (result.items[0].volumeInfo.description != null)
+        returnBook.Description = result.items[0].volumeInfo.description;
+    else if (result.items[0].searchInfo != null)
+		returnBook.Description = result.items[0].searchInfo.textSnippet;
+    else
+        returnBook.Description = "No description available.";
+
+
+    if (result.items[0].volumeInfo.imageLinks.thumbnail != null)
+        returnBook.ImageLink = result.items[0].volumeInfo.imageLinks.thumbnail;
+    else
+        returnBook.ImageLink = "https://via.placeholder.com/128x197.png";
+
+    return returnBook;
+
+});
+
+//9780141184944
 
 // Ifall jag behöver en Hub till projectet är det klart
 //app.MapHub<BookHub>("/hubs/Bookhub");
@@ -75,29 +106,4 @@ app.MapGet("/GetBookThumbnail:{isbn}", async (long isbn) =>
 app.MapFallbackToFile("index.html");
 
 app.Run();
-
-// Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-public class ImageLinks
-{
-	public string smallThumbnail { get; set; }
-	public string thumbnail { get; set; }
-}
-
-
-public class Item
-{
-	public VolumeInfo volumeInfo { get; set; }
-}
-
-
-public class Root
-{
-	public List<Item> items { get; set; }
-}
-
-public class VolumeInfo
-{
-	public ImageLinks imageLinks { get; set; }
-
-}
 

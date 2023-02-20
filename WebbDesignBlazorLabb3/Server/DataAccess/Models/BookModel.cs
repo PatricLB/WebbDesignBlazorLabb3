@@ -16,10 +16,6 @@ public class BookModel
     [BsonElement]
     public int Pages { get; set; }
 	[BsonElement]
-	public int Price { get; set; }
-	[BsonElement]
 	public string ImageLink { get; set; }
-
-
 
 }

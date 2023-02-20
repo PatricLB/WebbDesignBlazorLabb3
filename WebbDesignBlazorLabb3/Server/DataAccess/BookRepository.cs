@@ -33,7 +33,6 @@ public class BookRepository : IRepository<BookDto>
             Author = entity.Author,
             Description = entity.Description,
             Pages = entity.Pages,
-            Price = entity.Price,
 			ImageLink = entity.ImageLink
 		});
     }
@@ -50,7 +49,6 @@ public class BookRepository : IRepository<BookDto>
                 Title = b.Title,
                 Description = b.Description,
                 Pages = b.Pages,
-                Price = b.Price,
 				ImageLink = b.ImageLink
 			});
     }

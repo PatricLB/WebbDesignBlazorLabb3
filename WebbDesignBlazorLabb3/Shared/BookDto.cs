@@ -14,18 +14,16 @@ public class BookDto
 	public string Description { get; set; }
 	public string Author { get; set; }
 	public int Pages { get; set; }
-	public int Price { get; set; }
-
 	public string ImageLink { get; set; }
 
-	public BookDto(long isbn, string title, string desc, string auth, int pages, int price)
+	public BookDto(long isbn, string title, string desc, string auth, int pages, string imgLink)
 	{
 		Isbn = isbn;
 		Title = title;
 		Description = desc;
 		Author = auth;
 		Pages = pages;
-		Price = price;
+		ImageLink = imgLink;
 	}
 	public BookDto() 
 	{ 
