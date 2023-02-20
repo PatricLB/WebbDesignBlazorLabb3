@@ -78,7 +78,11 @@ app.MapGet("/GetBookInfo:{isbn}", async (long isbn) =>
     BookDto returnBook = new();
 
     returnBook.Title = result.items[0].volumeInfo.title;
-    returnBook.Author = result.items[0].volumeInfo.authors[0];
+    if (result.items[0].volumeInfo.authors == null)
+        returnBook.Author = "No data about the author";
+    else
+		returnBook.Author = result.items[0].volumeInfo.authors[0];
+
     returnBook.Pages = result.items[0].volumeInfo.pageCount;
 
     if (result.items[0].volumeInfo.description != null)
