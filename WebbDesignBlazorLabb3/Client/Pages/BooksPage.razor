@@ -46,28 +46,4 @@
 			new BookDto(9789511414650, "Tuhkaan piirretty maa", "testdesc5", "patric",500, "https://via.placeholder.com/128x197.png"),
 			new BookDto(9781484278680, "Pro C# 10 with .NET 6", "testdesc4", "patric",500, "http://books.google.com/books/content?id=bVa2zgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api")
 			};
-
-	public class ImageLinks
-	{
-		public string smallThumbnail { get; set; }
-		public string thumbnail { get; set; }
-	}
-
-
-	public class Item
-	{
-		public VolumeInfo volumeInfo { get; set; }
-	}
-
-
-	public class GoogleBooksJsonRoot
-	{
-		public List<Item> items { get; set; }
-	}
-
-	public class VolumeInfo
-	{
-		public ImageLinks imageLinks { get; set; }
-
-	}
 }

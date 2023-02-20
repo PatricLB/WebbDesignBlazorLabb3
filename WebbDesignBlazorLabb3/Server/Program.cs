@@ -89,7 +89,7 @@ app.MapGet("/GetBookInfo:{isbn}", async (long isbn) =>
         returnBook.Description = "No description available.";
 
 
-    if (result.items[0].volumeInfo.imageLinks.thumbnail != null)
+    if (result.items[0].volumeInfo.imageLinks != null)
         returnBook.ImageLink = result.items[0].volumeInfo.imageLinks.thumbnail;
     else
         returnBook.ImageLink = "https://via.placeholder.com/128x197.png";
