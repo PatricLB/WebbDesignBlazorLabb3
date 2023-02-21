@@ -2,7 +2,7 @@
 using MongoDB.Driver;
 using WebbDesignBlazorLabb3.Server.DataAccess.Models;
 using WebbDesignBlazorLabb3.Shared;
-using static WebbDesignBlazorLabb3.Client.Pages.BooksPage;
+using static WebbDesignBlazorLabb3.Client.Pages.OpenPages.BooksPage;
 
 namespace WebbDesignBlazorLabb3.Server.DataAccess;
 

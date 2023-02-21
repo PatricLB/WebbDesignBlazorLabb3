@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
-using System.Dynamic;
 using WebbDesignBlazorLabb3.Shared;
 
-namespace WebbDesignBlazorLabb3.Client.Pages;
+namespace WebbDesignBlazorLabb3.Client.Pages.OpenPages;
 
 public partial class AddBook : ComponentBase
 {
@@ -18,7 +17,7 @@ public partial class AddBook : ComponentBase
         trigger = 2;
         await GetBookInfo(bookToAdd.Isbn);
 
-		//books.Add(bookToAdd);
+        //books.Add(bookToAdd);
 
         //Skriv mer kod för att faktiskt lägga till i databasen.
     }
@@ -40,22 +39,4 @@ public partial class AddBook : ComponentBase
 
     }
 
-    private async Task GetThumbnail(long isbn)
-    {
-
-        HttpResponseMessage response = await client.GetAsync($"https://localhost:7294/GetBookThumbnail:{isbn}");
-        response.EnsureSuccessStatusCode();
-        var responseBody = await response.Content.ReadAsStringAsync();
-        if (responseBody.ToString() == "No image available")
-        {
-            bookToAdd.ImageLink = "https://via.placeholder.com/128x197.png";
-            Console.WriteLine(bookToAdd.ImageLink);
-        }
-        else
-        {
-            bookToAdd.ImageLink = responseBody.ToString();
-            Console.WriteLine(bookToAdd.ImageLink);
-
-        }
-    }
 }

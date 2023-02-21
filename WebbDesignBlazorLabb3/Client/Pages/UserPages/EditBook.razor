@@ -1,0 +1,54 @@
+﻿@page "/EditBook"
+@using Newtonsoft.Json;
+@using WebbDesignBlazorLabb3.Shared;
+
+@inject HttpClient client;
+
+<h1> Edit book</h1>
+
+
+<div class="input-group">
+	<EditForm Model="@bookToAdd">
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label-lg"> ISBN: </label>
+			<div class=" mb-2">
+				<InputNumber class="form-control" @bind-Value="bookToAdd.Isbn" disabled="true" />
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label-lg"> Title: </label>
+			<div class=" mb-2">
+				<InputText class="form-control" @bind-Value="bookToAdd.Title" />
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label-lg"> Author: </label>
+			<div class=" mb-2">
+				<InputText class="form-control" @bind-Value="bookToAdd.Author" />
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label-lg"> Description: </label>
+			<div class=" mb-2">
+				<InputTextArea class="form-control" @bind-Value="bookToAdd.Description" />
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label-lg"> Pages: </label>
+			<div class=" mb-2">
+				<InputNumber class="form-control" @bind-Value="bookToAdd.Pages" />
+			</div>
+		</div>
+	</EditForm>
+</div>
+<div class="col-md-0 mt-2">
+	<button type="Submit" class="btn btn-success">Save</button>
+	<button type="Submit" class="btn btn-warning m-5">Cancel</button>
+</div>
+
+
+@code {
+
+	BookDto bookToAdd = new();
+
+}
