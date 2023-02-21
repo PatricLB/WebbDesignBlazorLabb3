@@ -68,6 +68,11 @@ app.MapGet("/GetBookThumbnail:{isbn}", async (long isbn) =>
     return thumbnailParsed;
 });
 
+app.MapGet("/Book/getAll", async (IRepository<BookDto> bookRep) =>
+{
+    return await bookRep.GetAllAsync();
+});
+
 app.MapGet("/GetBookInfo:{isbn}", async (long isbn) =>
 {
     HttpClient client = new HttpClient();

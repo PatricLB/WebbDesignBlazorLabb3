@@ -29,10 +29,20 @@
 
 @code {
 
-	public string imgLink { get; set; } 
+	List<BookDto> BookList = new();
 
+	protected override async Task OnInitializedAsync()
+	{
+		await GetAllBooks();
+	}
 
-	public List<BookDto> Books = new List<BookDto> {
+	private async Task GetAllBooks()
+	{
+		BookList = (await client.GetFromJsonAsync<IEnumerable<BookDto>>("book/getAll")).ToList();
+
+	}
+
+    public List<BookDto> Books = new List<BookDto> {
 			new BookDto(9780434020942, "Angelmaker", "testdesc1", "patric",500, "http://books.google.com/books/content?id=48eD0wx-RR8C&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
 			new BookDto(9780593082959, "Losing Eden", "testdesc2", "patric",500, "http://books.google.com/books/content?id=cRCOEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
 			new BookDto(9780593535158, "The Magic Kingdom", "testdesc3", "patric",500, "http://books.google.com/books/content?id=fJiOEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
