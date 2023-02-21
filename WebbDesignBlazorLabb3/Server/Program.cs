@@ -73,9 +73,9 @@ app.MapGet("/Book/getAll", async (IRepository<BookDto> bookRep) =>
     return await bookRep.GetAllAsync();
 });
 
-app.MapPost("/Book/addBook", async (IRepository<BookDto> bookRep) =>
+app.MapPost("/Book/addBook", async (IRepository<BookDto> bookRep, BookDto addedBook) =>
 {
-
+    await bookRep.AddAsync(addedBook);
 });
 
 app.MapGet("/GetBookInfo:{isbn}", async (long isbn) =>

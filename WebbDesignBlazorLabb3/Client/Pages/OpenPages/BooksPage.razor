@@ -7,17 +7,14 @@
 <h3 class="text-center">Alla böcker</h3>
 <div class="d-inline-flex flex-wrap container-fluid">
 	<Virtualize Items="BookList" Context="book">
-		<div class="col-4 pb-lg-2 p-lg-2">
-			<div class="card mt-4">
+		<div class="col-2 pb-lg-2 p-lg-2">
+			<div class="card mt-2">
 				<div class="card-header">
-					<h5 class="text-center mt-3 text-truncate">@book.Title</h5>
+					<h5 class="text-center mt-3 text-truncate"><a href="/" class="link-dark">@book.Title</a></h5>
 				</div>
 				<div class="card-body text-center mt-2">
 					<img src="@book.ImageLink" class="mx-auto mt-3 align-content-center" height="197" width="128" />
 					<h5 class="card-title">@book.Author</h5>
-					<p class="card-text text-truncate">
-						Beskrivning @book.Description
-					</p>
 				</div>
 				<div class="text-center col-lg-12">
 					<button class="btn btn-success mt-2 mx-lg-2">Lägg till i profil</button>

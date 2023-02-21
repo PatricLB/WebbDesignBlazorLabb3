@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
+using System.Net.Http.Json;
 using WebbDesignBlazorLabb3.Shared;
 
 namespace WebbDesignBlazorLabb3.Client.Pages.OpenPages;
@@ -10,7 +11,7 @@ public partial class AddBook : ComponentBase
     public List<BookDto> books = new();
     public int trigger = 0;
 
-    public async void BookSubmit()
+    public async void FetchBook()
     {
 
         //books.Clear();
@@ -38,5 +39,10 @@ public partial class AddBook : ComponentBase
         StateHasChanged();
 
     }
+
+    private async Task SubmitBook()
+    {
+		using var response = await client.PostAsJsonAsync("Book/addBook", bookToAdd);
+	}
 
 }
