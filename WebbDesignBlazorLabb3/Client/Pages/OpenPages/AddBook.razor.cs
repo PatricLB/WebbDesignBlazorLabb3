@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MongoDB.Bson;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 using WebbDesignBlazorLabb3.Shared;
@@ -34,6 +35,7 @@ public partial class AddBook : ComponentBase
         else
         {
         bookOk = true;
+        bookToAdd.IsbnId = result.IsbnId;
 		bookToAdd.Authors = result.Authors;
         bookToAdd.Title = result.Title;
         bookToAdd.Description = result.Description;

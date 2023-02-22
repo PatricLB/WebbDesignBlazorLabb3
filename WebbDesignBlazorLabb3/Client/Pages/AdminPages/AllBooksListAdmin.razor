@@ -3,6 +3,7 @@
 @using WebbDesignBlazorLabb3.Shared;
 
 @inject HttpClient client;
+@inject NavigationManager UriHelper
 
 <h3>Edit Books</h3>
 
@@ -28,7 +29,7 @@
 					}
 			  </th>
 		  <div class="btn-group-lg">
-			  <button class="btn btn-warning"> Edit </button>
+					<button class="btn btn-warning" @onclick="() => GoToEdit(book.Isbn)"> Edit </button>
 			  <button class="btn btn-outline-danger"> Delete </button>
 		  </div>
 		</tr>
@@ -47,6 +48,10 @@
 	private async Task GetAllBooks()
 	{
 		BookList = (await client.GetFromJsonAsync<IEnumerable<BookDto>>("book/getAll")).ToList();
+	}
 
+	private void GoToEdit(long isbn)
+	{
+		UriHelper.NavigateTo($"Editbook/{isbn}");
 	}
 }

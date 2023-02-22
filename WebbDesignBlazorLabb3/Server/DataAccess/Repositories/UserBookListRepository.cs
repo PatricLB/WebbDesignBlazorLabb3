@@ -54,4 +54,8 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 		throw new NotImplementedException();
 	}
 
+	public Task<UserBookListDto> GetAsync(long isbn)
+	{
+		throw new NotImplementedException();
+	}
 }

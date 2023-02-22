@@ -1,12 +1,15 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using WebbDesignBlazorLabb3.Shared;
 
 namespace WebbDesignBlazorLabb3.Server.DataAccess.Models;
 
 public class BookModel
 {
-    [BsonId]
-    public long Isbn { get; set; }
+	[BsonId]
+    public long IsbnId { get; set; }
+    [BsonElement]
+	public long Isbn { get; set; }
     [BsonElement]
     public string Title { get; set; }
     [BsonElement]

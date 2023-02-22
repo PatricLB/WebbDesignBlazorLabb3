@@ -18,7 +18,7 @@ public class BookHub
 
 	public async Task GetBook(BookDto book)
 	{
-		await _bookRepository.GetAsync(book);
+
 
 		//Skicka till alla klienter som lyssnar på sidan. Ifall det behövs så finns det här
 		//await Client.All.SendAsync("SendBook", book);

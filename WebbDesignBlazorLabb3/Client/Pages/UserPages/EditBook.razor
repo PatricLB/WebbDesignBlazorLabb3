@@ -1,4 +1,4 @@
-﻿@page "/EditBook"
+﻿@page "/EditBook/{ISBN}"
 @using Newtonsoft.Json;
 @using WebbDesignBlazorLabb3.Shared;
 
@@ -41,9 +41,21 @@
 	<button type="Submit" class="btn btn-warning m-5">Cancel</button>
 </div>
 
-
+<p> @ISBN</p>
 @code {
+	[Parameter]
+	public string ISBN { get; set; }
 
 	BookDto bookToEdit = new();
+	public long handeledIsbn;
+
+	protected override async Task OnInitializedAsync()
+	{
+		handeledIsbn = (long)Convert.ToInt64(ISBN);
+		bookToEdit.Isbn = handeledIsbn;
+		var fetchedBook = await client.GetFromJsonAsync<IEnumerable<BookDto>>($"Book/getBook:{bookToEdit.Isbn}");
+		Console.WriteLine(fetchedBook);
+	}
+
 
 }

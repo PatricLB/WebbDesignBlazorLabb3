@@ -50,6 +50,10 @@ app.MapGet("/Book/getAll", async (IRepository<BookDto> bookRep) =>
 {
     return await bookRep.GetAllAsync();
 });
+app.MapGet("/Book/getBook:{isbn}", async (IRepository<BookDto> bookRep, long isbn) =>
+{
+    await bookRep.GetAsync(isbn);
+});
 
 app.MapPost("/Book/addBook", async (IRepository<BookDto> bookRep, BookDto addedBook) =>
 {
@@ -76,8 +80,11 @@ app.MapGet("/GetBookInfo:{isbn}", async (long isbn) =>
 
     returnBook = new();
 
+
+    returnBook.Title = result.items[0].volumeInfo.title;
+
 	if (result.items[0].volumeInfo.authors == null)
-        returnBook.Authors[0] = "No data about the author";
+        returnBook.Authors.Add("No data about the author");
     else
         foreach (var author in result.items[0].volumeInfo.authors)
         {

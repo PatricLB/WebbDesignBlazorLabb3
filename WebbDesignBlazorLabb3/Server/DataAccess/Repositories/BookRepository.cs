@@ -1,5 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using Newtonsoft.Json;
+using SharpCompress.Common;
 using WebbDesignBlazorLabb3.Server.DataAccess.Models;
 using WebbDesignBlazorLabb3.Shared;
 using static WebbDesignBlazorLabb3.Client.Pages.OpenPages.BooksPage;
@@ -28,6 +30,7 @@ public class BookRepository : IRepository<BookDto>
     {
         await _bookCollection.InsertOneAsync(new BookModel()
         {
+			IsbnId = entity.Isbn,
             Isbn = entity.Isbn,
             Title = entity.Title,
             Authors = entity.Authors,
@@ -44,6 +47,7 @@ public class BookRepository : IRepository<BookDto>
         return allBooks.ToEnumerable()
             .Select(b => new BookDto()
             {
+                IsbnId = b.IsbnId,
                 Isbn = b.Isbn,
                 Authors = b.Authors,
                 Title = b.Title,
@@ -60,12 +64,27 @@ public class BookRepository : IRepository<BookDto>
     }
 
 
-    public Task<BookDto> GetAsync(object id)
+    public async Task<BookDto> GetAsync(long isbn)
     {
-        throw new NotImplementedException();
-    }
+		var filter = Builders<BookModel>.Filter.Eq(_id => _id.Isbn, isbn);
+		var book = await _bookCollection.FindAsync(filter);
+        return null;
+		/*
+        return book.ToEnumerable
+		
+		.Select(b => new BookDto()
+		{
+			IsbnId = b.IsbnId,
+			Isbn = b.Isbn,
+			Authors = b.Authors,
+			Title = b.Title,
+			Description = b.Description,
+			Pages = b.Pages,
+			ImageLink = b.ImageLink
+		});*/
+	}
 
-    public Task<BookDto> UpdateAsync(BookDto entity)
+	public Task<BookDto> UpdateAsync(BookDto entity)
     {
         throw new NotImplementedException();
     }
