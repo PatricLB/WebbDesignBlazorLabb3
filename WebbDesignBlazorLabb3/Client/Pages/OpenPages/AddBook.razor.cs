@@ -10,17 +10,12 @@ public partial class AddBook : ComponentBase
     BookDto bookToAdd = new();
     public List<BookDto> books = new();
     public int trigger = 0;
+    public bool bookOk;
 
     public async void FetchBook()
     {
-
-        //books.Clear();
         trigger = 2;
         await GetBookInfo(bookToAdd.Isbn);
-
-        //books.Add(bookToAdd);
-
-        //Skriv mer kod för att faktiskt lägga till i databasen.
     }
 
     private async Task GetBookInfo(long isbn)
@@ -30,7 +25,16 @@ public partial class AddBook : ComponentBase
         var responseBody = await response.Content.ReadAsStringAsync();
         var result = JsonConvert.DeserializeObject<BookDto>(responseBody);
 
-        bookToAdd.Author = result.Author;
+        if (result == null)
+        {
+            bookOk = false;
+            trigger = 1;
+            StateHasChanged();
+		}
+        else
+        {
+        bookOk = true;
+		bookToAdd.Authors = result.Authors;
         bookToAdd.Title = result.Title;
         bookToAdd.Description = result.Description;
         bookToAdd.Pages = result.Pages;
@@ -38,6 +42,7 @@ public partial class AddBook : ComponentBase
         trigger = 1;
         StateHasChanged();
 
+        }
     }
 
     private async Task SubmitBook()

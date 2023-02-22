@@ -7,14 +7,19 @@
 <h3 class="text-center">Alla böcker</h3>
 <div class="d-inline-flex flex-wrap container-fluid">
 	<Virtualize Items="BookList" Context="book">
-		<div class="col-2 pb-lg-2 p-lg-2">
+		<div class="col-lg-4 col-md-6 col-sm-12 pb-lg-2 p-lg-2">
 			<div class="card mt-2">
 				<div class="card-header">
 					<h5 class="text-center mt-3 text-truncate"><a href="/" class="link-dark">@book.Title</a></h5>
 				</div>
 				<div class="card-body text-center mt-2">
 					<img src="@book.ImageLink" class="mx-auto mt-3 align-content-center" height="197" width="128" />
-					<h5 class="card-title">@book.Author</h5>
+					<h6 class="card-title">
+						@foreach (var auth in book.Authors)
+						{
+							@auth 
+						}
+						</h6>
 				</div>
 				<div class="text-center col-lg-12">
 					<button class="btn btn-success mt-2 mx-lg-2">Lägg till i profil</button>
@@ -38,19 +43,21 @@
 		BookList = (await client.GetFromJsonAsync<IEnumerable<BookDto>>("book/getAll")).ToList();
 
 	}
-
-    public List<BookDto> Books = new List<BookDto> {
-			new BookDto(9780434020942, "Angelmaker", "testdesc1", "patric",500, "http://books.google.com/books/content?id=48eD0wx-RR8C&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
-			new BookDto(9780593082959, "Losing Eden", "testdesc2", "patric",500, "http://books.google.com/books/content?id=cRCOEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
-			new BookDto(9780593535158, "The Magic Kingdom", "testdesc3", "patric",500, "http://books.google.com/books/content?id=fJiOEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
-			new BookDto(9781484278680, "Pro C# 10 with .NET 6", "testdesc4", "patric",500, "http://books.google.com/books/content?id=bVa2zgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
-			new BookDto(9781644734780, "Violeta (Spanish Edition)", "testdesc5", "patric",500, "http://books.google.com/books/content?id=nqmQEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
-			new BookDto(9781893115262, "Visual Basic .NET and the .NET Platform: An Advanced Guide", "testdesc5", "patric",500, "http://books.google.com/books/content?id=4ZNQAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
-			new BookDto(9789175152820, "En mystisk hemmakväll", "testdesc5", "patric",500, "https://via.placeholder.com/128x197.png"),
-			new BookDto(9789189015562, "En del har det bra", "testdesc5", "patric",500, "https://via.placeholder.com/128x197.png"),
-			new BookDto(9789189603202, "En bra plats i skallen", "testdesc5", "patric",500, "https://via.placeholder.com/128x197.png"),
-			new BookDto(9789189632646, "Storpack", "testdesc5", "patric",500, "http://books.google.com/books/content?id=8mmstgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
-			new BookDto(9789511414650, "Tuhkaan piirretty maa", "testdesc5", "patric",500, "https://via.placeholder.com/128x197.png"),
-			new BookDto(9781484278680, "Pro C# 10 with .NET 6", "testdesc4", "patric",500, "http://books.google.com/books/content?id=bVa2zgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api")
+	static List<string> authersMock;
+	/*
+	public List<BookDto> Books = new List<BookDto> {
+			new BookDto(9780434020942, "Angelmaker", "testdesc1", authersMock.f,500, "http://books.google.com/books/content?id=48eD0wx-RR8C&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
+			new BookDto(9780593082959, "Losing Eden", "testdesc2", authersMock,500, "http://books.google.com/books/content?id=cRCOEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
+			new BookDto(9780593535158, "The Magic Kingdom", "testdesc3", authersMock,500, "http://books.google.com/books/content?id=fJiOEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
+			new BookDto(9781484278680, "Pro C# 10 with .NET 6", "testdesc4", authersMock,500, "http://books.google.com/books/content?id=bVa2zgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
+			new BookDto(9781644734780, "Violeta (Spanish Edition)", "testdesc5", authersMock,500, "http://books.google.com/books/content?id=nqmQEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
+			new BookDto(9781893115262, "Visual Basic .NET and the .NET Platform: An Advanced Guide", "testdesc5", authersMock,500, "http://books.google.com/books/content?id=4ZNQAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
+			new BookDto(9789175152820, "En mystisk hemmakväll", "testdesc5", authersMock,500, "https://via.placeholder.com/128x197.png"),
+			new BookDto(9789189015562, "En del har det bra", "testdesc5", authersMock,500, "https://via.placeholder.com/128x197.png"),
+			new BookDto(9789189603202, "En bra plats i skallen", "testdesc5", authersMock,500, "https://via.placeholder.com/128x197.png"),
+			new BookDto(9789189632646, "Storpack", "testdesc5", authersMock,500, "http://books.google.com/books/content?id=8mmstgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
+			new BookDto(9789511414650, "Tuhkaan piirretty maa", "testdesc5", authersMock,500, "https://via.placeholder.com/128x197.png"),
+			new BookDto(9781484278680, "Pro C# 10 with .NET 6", "testdesc4", authersMock,500, "http://books.google.com/books/content?id=bVa2zgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api")
 			};
+			*/
 }

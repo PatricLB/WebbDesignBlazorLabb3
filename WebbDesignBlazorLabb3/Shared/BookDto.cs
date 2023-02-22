@@ -12,7 +12,7 @@ public class BookDto
 	public long Isbn { get; set; } = 0;
 	public string Title { get; set; } = string.Empty;
 	public string Description { get; set; } = string.Empty;
-	public string Author { get; set; } = string.Empty;
+	public List<string> Authors { get; set; } = new List<string>();
 	public int Pages { get; set; } = 0;
 	public string ImageLink { get; set; } = string.Empty;
 
@@ -21,7 +21,7 @@ public class BookDto
 		Isbn = isbn;
 		Title = title;
 		Description = desc;
-		Author = auth;
+		Authors.Add(auth);
 		Pages = pages;
 		ImageLink = imgLink;
 	}

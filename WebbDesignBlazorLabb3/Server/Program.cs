@@ -85,13 +85,20 @@ app.MapGet("/GetBookInfo:{isbn}", async (long isbn) =>
     response.EnsureSuccessStatusCode();
     var responseBody = await response.Content.ReadAsStringAsync();
     var result = JsonConvert.DeserializeObject<Root>(responseBody);
-    BookDto returnBook = new();
+    BookDto? returnBook = null;
 
-    returnBook.Title = result.items[0].volumeInfo.title;
-    if (result.items[0].volumeInfo.authors == null)
-        returnBook.Author = "No data about the author";
+    if (result.TotalItems == 0)
+        return returnBook;
+
+    returnBook = new();
+
+	if (result.items[0].volumeInfo.authors == null)
+        returnBook.Authors[0] = "No data about the author";
     else
-		returnBook.Author = result.items[0].volumeInfo.authors[0];
+        foreach (var author in result.items[0].volumeInfo.authors)
+        {
+            returnBook.Authors.Add(author);
+		}
 
     returnBook.Pages = result.items[0].volumeInfo.pageCount;
 

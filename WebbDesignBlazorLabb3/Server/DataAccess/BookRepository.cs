@@ -30,8 +30,8 @@ public class BookRepository : IRepository<BookDto>
         {
             Isbn = entity.Isbn,
             Title = entity.Title,
-            Author = entity.Author,
-            Description = entity.Description,
+            Authors = entity.Authors,
+			Description = entity.Description,
             Pages = entity.Pages,
 			ImageLink = entity.ImageLink
 		});
@@ -45,7 +45,7 @@ public class BookRepository : IRepository<BookDto>
             .Select(b => new BookDto()
             {
                 Isbn = b.Isbn,
-                Author = b.Author,
+                Authors = b.Authors,
                 Title = b.Title,
                 Description = b.Description,
                 Pages = b.Pages,

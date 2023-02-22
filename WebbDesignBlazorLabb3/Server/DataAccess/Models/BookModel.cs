@@ -12,7 +12,7 @@ public class BookModel
     [BsonElement]
     public string Description { get; set; }
     [BsonElement]
-    public string Author { get; set; }
+    public List<string> Authors { get; set; }
     [BsonElement]
     public int Pages { get; set; }
 	[BsonElement]

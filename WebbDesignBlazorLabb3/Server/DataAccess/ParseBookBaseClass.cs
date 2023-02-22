@@ -4,7 +4,9 @@ public class ParseBookBaseClass
 {
     public class Root
     {
+        public int TotalItems { get; set; }
         public List<Item> items { get; set; }
+
     }
     public class Item
     {
