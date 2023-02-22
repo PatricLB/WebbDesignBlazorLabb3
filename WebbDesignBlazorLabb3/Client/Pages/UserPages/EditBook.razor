@@ -8,35 +8,30 @@
 
 
 <div class="input-group">
-	<EditForm Model="@bookToAdd">
+	<EditForm Model="@bookToEdit">
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label-lg"> ISBN: </label>
 			<div class=" mb-2">
-				<InputNumber class="form-control" @bind-Value="bookToAdd.Isbn" disabled="true" />
+				<InputNumber class="form-control" @bind-Value="bookToEdit.Isbn" disabled="true" />
 			</div>
 		</div>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label-lg"> Title: </label>
 			<div class=" mb-2">
-				<InputText class="form-control" @bind-Value="bookToAdd.Title" />
-			</div>
-		</div>
-		<div class="form-group row">
-			<label class="col-md-2 col-form-label-lg"> Authors: </label>
-			<div class=" mb-2">
-				<InputText class="form-control" @bind-Value="bookToAdd.Authors[0]" />
+				<InputText class="form-control" @bind-Value="bookToEdit.Title" />
 			</div>
 		</div>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label-lg"> Description: </label>
 			<div class=" mb-2">
-				<InputTextArea class="form-control" @bind-Value="bookToAdd.Description" />
+				<InputTextArea class="form-control" @bind-Value="bookToEdit.Description" />
+				
 			</div>
 		</div>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label-lg"> Pages: </label>
 			<div class=" mb-2">
-				<InputNumber class="form-control" @bind-Value="bookToAdd.Pages" />
+				<InputNumber class="form-control" @bind-Value="bookToEdit.Pages" />
 			</div>
 		</div>
 	</EditForm>
@@ -49,6 +44,6 @@
 
 @code {
 
-	BookDto bookToAdd = new();
+	BookDto bookToEdit = new();
 
 }

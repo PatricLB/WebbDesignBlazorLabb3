@@ -4,7 +4,7 @@ using WebbDesignBlazorLabb3.Server.DataAccess.Models;
 using WebbDesignBlazorLabb3.Shared;
 using static WebbDesignBlazorLabb3.Client.Pages.OpenPages.BooksPage;
 
-namespace WebbDesignBlazorLabb3.Server.DataAccess;
+namespace WebbDesignBlazorLabb3.Server.DataAccess.Repositories;
 
 public class BookRepository : IRepository<BookDto>
 {
@@ -31,10 +31,10 @@ public class BookRepository : IRepository<BookDto>
             Isbn = entity.Isbn,
             Title = entity.Title,
             Authors = entity.Authors,
-			Description = entity.Description,
+            Description = entity.Description,
             Pages = entity.Pages,
-			ImageLink = entity.ImageLink
-		});
+            ImageLink = entity.ImageLink
+        });
     }
     public async Task<IEnumerable<BookDto>> GetAllAsync()
     {
@@ -49,15 +49,15 @@ public class BookRepository : IRepository<BookDto>
                 Title = b.Title,
                 Description = b.Description,
                 Pages = b.Pages,
-				ImageLink = b.ImageLink
-			});
+                ImageLink = b.ImageLink
+            });
     }
 
     public async Task DeleteAsync(object id)
     {
-		var deleteFilter = Builders<BookModel>.Filter.Eq("Isbn", id);
-		await _bookCollection.DeleteOneAsync(deleteFilter);
-	}
+        var deleteFilter = Builders<BookModel>.Filter.Eq("Isbn", id);
+        await _bookCollection.DeleteOneAsync(deleteFilter);
+    }
 
 
     public Task<BookDto> GetAsync(object id)

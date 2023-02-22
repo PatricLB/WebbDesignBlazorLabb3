@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Rewrite;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using WebbDesignBlazorLabb3.Server.DataAccess;
+using WebbDesignBlazorLabb3.Server.DataAccess.Repositories;
 using WebbDesignBlazorLabb3.Server.Hubs;
 using WebbDesignBlazorLabb3.Shared;
 using static WebbDesignBlazorLabb3.Server.DataAccess.ParseBookBaseClass;
@@ -17,6 +18,7 @@ builder.Services.AddRazorPages();
 
 
 builder.Services.AddScoped<IRepository<BookDto>, BookRepository>();
+builder.Services.AddScoped<IRepository<UserBookListDto>, UserBookListRepository>();
 builder.Services.AddSignalR();
 
 var app = builder.Build();
@@ -44,30 +46,6 @@ app.MapRazorPages();
 
 //API funktioner
 
-app.MapGet("/GetBookThumbnail:{isbn}", async (long isbn) =>
-{
-    HttpClient client = new ();
-    HttpResponseMessage response = await client.GetAsync($"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}");
-    response.EnsureSuccessStatusCode();
-    var responseBody = await response.Content.ReadAsStringAsync();
-    var result = JsonConvert.DeserializeObject<Root>(responseBody);
-
-    string thumbnailParsed = string.Empty;
-    foreach (var item in result.items)
-    {
-        if (item.volumeInfo.imageLinks == null)
-        {
-            return "No image available";
-        }
-        else
-        {
-            thumbnailParsed = item.volumeInfo.imageLinks.thumbnail;
-        }
-    }
-    Console.WriteLine(thumbnailParsed);
-    return thumbnailParsed;
-});
-
 app.MapGet("/Book/getAll", async (IRepository<BookDto> bookRep) =>
 {
     return await bookRep.GetAllAsync();
@@ -77,6 +55,12 @@ app.MapPost("/Book/addBook", async (IRepository<BookDto> bookRep, BookDto addedB
 {
     await bookRep.AddAsync(addedBook);
 });
+
+app.MapPost("/Booklists/AddList", async (IRepository<UserBookListDto> bookRep, UserBookListDto UserBookListDto) =>
+{
+    await bookRep.AddAsync(UserBookListDto);
+});
+
 
 app.MapGet("/GetBookInfo:{isbn}", async (long isbn) =>
 {
@@ -118,8 +102,6 @@ app.MapGet("/GetBookInfo:{isbn}", async (long isbn) =>
     return returnBook;
 
 });
-
-//9780141184944
 
 // Ifall jag behöver en Hub till projectet är det klart
 //app.MapHub<BookHub>("/hubs/Bookhub");

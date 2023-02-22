@@ -1,7 +1,8 @@
 ﻿using MongoDB.Driver;
-using WebbDesignBlazorLabb3.Server.DataAccess;
 using WebbDesignBlazorLabb3.Shared;
 using Microsoft.AspNetCore.SignalR;
+using WebbDesignBlazorLabb3.Server.DataAccess.Repositories;
+using WebbDesignBlazorLabb3.Server.DataAccess;
 
 namespace WebbDesignBlazorLabb3.Server.Hubs;
 

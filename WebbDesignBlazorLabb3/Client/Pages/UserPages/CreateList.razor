@@ -1,0 +1,35 @@
+﻿@page "/AddList"
+
+@using WebbDesignBlazorLabb3.Shared;
+@inject HttpClient _httpClient;
+
+<h3>CreateList</h3>
+
+<EditForm Model="newList" OnSubmit="@CreateNewList">
+	<button class="btn btn-success mt-4"> Lägg till Test listan i databasen</button>
+</EditForm>
+
+@code {
+
+	UserBookListDto newList = new ();
+	UserBookListDto.BookListDto bookList = new()
+	{
+		Name = "testName1",
+		Description = "Här finns mina bästa böcker",
+		Content = new List<long>(){190, 203, 299,101492, 942321}
+	};
+	UserBookListDto.BookListDto bookList2 = new()
+		{
+			Name = "testName1",
+			Description = "Här finns mina sämsta böcker",
+			Content = new List<long>() { 190, 203, 299, 101492, 942321 }
+		};
+
+	private async Task CreateNewList()
+	{
+		newList.Id = "3";
+		newList.Lists.Add(bookList);
+		newList.Lists.Add(bookList2);
+		var response = await _httpClient.PostAsJsonAsync("Booklists/AddList", newList);
+	}
+}

@@ -47,7 +47,8 @@ public partial class AddBook : ComponentBase
 
     private async Task SubmitBook()
     {
-		using var response = await client.PostAsJsonAsync("Book/addBook", bookToAdd);
+		var response = await client.PostAsJsonAsync("Book/addBook", bookToAdd);
+        trigger = 3;
 	}
 
 }
