@@ -1,11 +1,6 @@
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.AspNetCore.Rewrite;
-using MongoDB.Bson;
 using Newtonsoft.Json;
 using WebbDesignBlazorLabb3.Server.DataAccess;
 using WebbDesignBlazorLabb3.Server.DataAccess.Repositories;
-using WebbDesignBlazorLabb3.Server.Hubs;
 using WebbDesignBlazorLabb3.Shared;
 using static WebbDesignBlazorLabb3.Server.DataAccess.ParseBookBaseClass;
 
@@ -52,12 +47,16 @@ app.MapGet("/Book/getAll", async (IRepository<BookDto> bookRep) =>
 });
 app.MapGet("/Book/getBook:{isbn}", async (IRepository<BookDto> bookRep, long isbn) =>
 {
-    await bookRep.GetAsync(isbn);
+    return await bookRep.GetAsync(isbn);
 });
 
 app.MapPost("/Book/addBook", async (IRepository<BookDto> bookRep, BookDto addedBook) =>
 {
     await bookRep.AddAsync(addedBook);
+});
+app.MapPut("/Book/UpdateBook", async (IRepository<BookDto> bookRep, BookDto book) =>
+{
+    await bookRep.UpdateAsync(book);
 });
 
 app.MapPost("/Booklists/AddList", async (IRepository<UserBookListDto> bookRep, UserBookListDto UserBookListDto) =>

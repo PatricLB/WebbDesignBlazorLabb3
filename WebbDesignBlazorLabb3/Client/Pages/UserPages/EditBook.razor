@@ -3,12 +3,14 @@
 @using WebbDesignBlazorLabb3.Shared;
 
 @inject HttpClient client;
+@inject NavigationManager UriHelper
 
 <h1> Edit book</h1>
 
-
+@if (trigger == 0)
+{
 <div class="input-group">
-	<EditForm Model="@bookToEdit">
+	<EditForm Model="@bookToEdit" Context="book">
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label-lg"> ISBN: </label>
 			<div class=" mb-2">
@@ -25,7 +27,6 @@
 			<label class="col-md-2 col-form-label-lg"> Description: </label>
 			<div class=" mb-2">
 				<InputTextArea class="form-control" @bind-Value="bookToEdit.Description" />
-				
 			</div>
 		</div>
 		<div class="form-group row">
@@ -34,27 +35,83 @@
 				<InputNumber class="form-control" @bind-Value="bookToEdit.Pages" />
 			</div>
 		</div>
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label-lg"> ImageLink: </label>
+			<div class=" mb-2">
+				<InputText class="form-control" @bind-Value="bookToEdit.ImageLink" />
+			</div>
+		</div>
 	</EditForm>
 </div>
 <div class="col-md-0 mt-2">
-	<button type="Submit" class="btn btn-success">Save</button>
-	<button type="Submit" class="btn btn-warning m-5">Cancel</button>
-</div>
+	<button type="Submit" class="btn btn-success" @onclick="UpdateBook">Save</button>
+	<button type="Submit" class="btn btn-warning m-5" @onclick="SendUserBack">Cancel</button>
+	</div>
+}
+else if(trigger == 1)
+{
+	if (!doneLoading)
+	{
+	<p> Boken uppdateras...</p>
+		<div class="spinner-border mt-4"></div>
+	}
+	if(doneLoading)
+	{
+	<p> Boken uppdaterad!</p>
+	}
+}
+else if (trigger == 2)
+{
+	<p>Boken kunde inte uppdateras. Fel inträffade </p>
+}
 
-<p> @ISBN</p>
 @code {
 	[Parameter]
 	public string ISBN { get; set; }
-
+	public bool doneLoading { get; set; }
 	BookDto bookToEdit = new();
 	public long handeledIsbn;
+
+	private int trigger;
 
 	protected override async Task OnInitializedAsync()
 	{
 		handeledIsbn = (long)Convert.ToInt64(ISBN);
 		bookToEdit.Isbn = handeledIsbn;
-		var fetchedBook = await client.GetFromJsonAsync<IEnumerable<BookDto>>($"Book/getBook:{bookToEdit.Isbn}");
-		Console.WriteLine(fetchedBook);
+		var fetchedBook = (await client.GetFromJsonAsync<BookDto>($"Book/getBook:{bookToEdit.Isbn}"));
+		bookToEdit.Title = fetchedBook.Title;
+		bookToEdit.Authors = fetchedBook.Authors;
+		bookToEdit.Description = fetchedBook.Description;
+		bookToEdit.Pages = fetchedBook.Pages;
+		bookToEdit.ImageLink = fetchedBook.ImageLink;
+
+		trigger = 0;
+	}
+
+	private async void UpdateBook()
+	{
+		var response = (await client.PutAsJsonAsync($"Book/UpdateBook", bookToEdit));
+		if (response.IsSuccessStatusCode)
+		{
+			trigger = 1;
+			StateHasChanged();
+			await Task.Delay(2500);
+			doneLoading = true;
+			StateHasChanged();
+			await Task.Delay(1000);
+			UriHelper.NavigateTo($"/AllBooksList");
+		}
+		else
+		{
+			trigger = 2;
+			StateHasChanged();
+		}
+
+	}
+
+	private void SendUserBack()
+	{
+		UriHelper.NavigateTo($"/AllBooksList");
 	}
 
 

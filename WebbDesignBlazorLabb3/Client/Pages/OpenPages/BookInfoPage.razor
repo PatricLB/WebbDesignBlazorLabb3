@@ -1,0 +1,51 @@
+﻿@page "/Book/{ISBN}"
+@using WebbDesignBlazorLabb3.Shared;
+
+@inject HttpClient client;
+@inject NavigationManager UriHelper
+
+<h3>BookInfoPage</h3>
+
+<div class="m-4">
+	
+	<img class="mt-2" src="@currentBook.ImageLink">
+	<button type="Submit" class="btn btn-info m-5" @onclick="SendUserBack">Gå tillbaka</button>
+	<p class="mt-3"> ISBN: @currentBook.Isbn</p>
+	<p class="mt-2"> Titel: @currentBook.Title</p>
+		<p class="mt-2"> Författare:
+		@foreach (var author in currentBook.Authors)
+		{
+			@author
+		}
+			</p>
+		<p class="mt-2"> Beskrivning: 
+			<span class="d-block " style="max-width: 750px;">
+			@currentBook.Description
+			</span>
+		</p>
+	<p class="mt-4"> Sidor: @currentBook.Pages</p>
+	</div>
+@code {
+	BookDto currentBook = new();
+	[Parameter]
+	public string ISBN { get; set; }
+	public long handeledIsbn { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		handeledIsbn = (long)Convert.ToInt64(ISBN);
+		currentBook.Isbn = handeledIsbn;
+		var fetchedBook = (await client.GetFromJsonAsync<BookDto>($"Book/getBook:{currentBook.Isbn}"));
+		currentBook.Title = fetchedBook.Title;
+		currentBook.Authors = fetchedBook.Authors;
+		currentBook.Description = fetchedBook.Description;
+		currentBook.Pages = fetchedBook.Pages;
+		currentBook.ImageLink = fetchedBook.ImageLink;
+	}
+
+
+	private void SendUserBack()
+	{
+		UriHelper.NavigateTo($"/BooksPage");
+	}
+}

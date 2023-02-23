@@ -32,7 +32,7 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 			Lists = dtoConverted.Lists
 		}) ;
 	}
-	public async Task<UserBookListDto> UpdateAsync(UserBookListDto entity)
+	public async Task<UserBookListDto> UpdateAsync(UserBookListDto entity, long id)
 	{
 		UserBookListModel dtoConverted = JsonConvert.DeserializeObject<UserBookListModel>(JsonConvert.SerializeObject(entity));
 
@@ -55,6 +55,11 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 	}
 
 	public Task<UserBookListDto> GetAsync(long isbn)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task UpdateAsync(UserBookListDto entity)
 	{
 		throw new NotImplementedException();
 	}

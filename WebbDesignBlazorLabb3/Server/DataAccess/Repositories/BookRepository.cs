@@ -63,29 +63,28 @@ public class BookRepository : IRepository<BookDto>
         await _bookCollection.DeleteOneAsync(deleteFilter);
     }
 
+	public async Task UpdateAsync(BookDto entity)
+    {
+		var updateFilter = Builders<BookModel>.Filter.Eq("Isbn", entity.Isbn);
+        var updateBook = Builders<BookModel>.Update
+            .Set("Title", entity.Title)
+            .Set("Description", entity.Description)
+            .Set("Authors", entity.Authors)
+            .Set("Pages", entity.Pages)
+            .Set("ImageLink", entity.ImageLink);
+
+         await _bookCollection.UpdateOneAsync(updateFilter, updateBook);
+
+	}
 
     public async Task<BookDto> GetAsync(long isbn)
     {
-		var filter = Builders<BookModel>.Filter.Eq(_id => _id.Isbn, isbn);
-		var book = await _bookCollection.FindAsync(filter);
-        return null;
-		/*
-        return book.ToEnumerable
-		
-		.Select(b => new BookDto()
-		{
-			IsbnId = b.IsbnId,
-			Isbn = b.Isbn,
-			Authors = b.Authors,
-			Title = b.Title,
-			Description = b.Description,
-			Pages = b.Pages,
-			ImageLink = b.ImageLink
-		});*/
+		var book = await _bookCollection.Find(x => x.Isbn == isbn).FirstOrDefaultAsync();
+
+        var bookToString = JsonConvert.SerializeObject(book);
+        var stringToBookDto = JsonConvert.DeserializeObject<BookDto>(bookToString);
+
+		return stringToBookDto;
 	}
 
-	public Task<BookDto> UpdateAsync(BookDto entity)
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -3,6 +3,7 @@
 @using WebbDesignBlazorLabb3.Shared;
 
 @inject HttpClient client;
+@inject NavigationManager UriHelper
 
 <h3 class="text-center">Alla böcker</h3>
 <div class="d-inline-flex flex-wrap container-fluid">
@@ -10,7 +11,7 @@
 		<div class="col-lg-3 col-md-6 col-sm-12 pb-lg-2 p-lg-2">
 			<div class="card mt-2">
 				<div class="card-header">
-					<h5 class="text-center mt-3 text-truncate"><a href="/" class="link-dark">@book.Title</a></h5>
+					<h5 class="text-center mt-3 text-truncate"><button class="btn btn-link" @onclick="() => GoToBookView(book.Isbn)">@book.Title</button></h5>
 				</div>
 				<div class="card-body text-center mt-2">
 					<img src="@book.ImageLink" class="mx-auto mt-3 align-content-center" height="197" width="128" />
@@ -42,6 +43,12 @@
 	{
 		BookList = (await client.GetFromJsonAsync<IEnumerable<BookDto>>("book/getAll")).ToList();
 	}
+
+	private void GoToBookView(long isbn)
+	{
+		UriHelper.NavigateTo($"Book/{isbn}");
+	}
+
 	/*
 	public List<BookDto> Books = new List<BookDto> {
 			new BookDto(9780434020942, "Angelmaker", "testdesc1", authersMock,500, "http://books.google.com/books/content?id=48eD0wx-RR8C&printsec=frontcover&img=1&zoom=1&source=gbs_api"),
