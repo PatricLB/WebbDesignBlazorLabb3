@@ -1,0 +1,69 @@
+﻿@page "/profile"
+
+@using Newtonsoft.Json;
+@using WebbDesignBlazorLabb3.Shared;
+@inject HttpClient _client;
+@inject NavigationManager UriHelper
+
+
+<h3>@profileName profile!</h3>
+
+<button @onclick="CreateNewList">Skapa din lista</button>
+
+<div class="col-3 col-sm-6 col-lg-2">
+<div class="list-group" id="myList" role="tablist">
+  <a class="list-group-item list-group-item-action active" data-toggle="list" role="tab">Home</a>
+  <a class="list-group-item list-group-item-action" data-toggle="list"  role="tab">Profile</a>
+  <a class="list-group-item list-group-item-action" data-toggle="list"  role="tab">Messages</a>
+  <a class="list-group-item list-group-item-action" data-toggle="list"  role="tab">Settings</a>
+</div>
+</div>
+
+@*<Virtualize Items="UserList" Context="book">
+	<div>
+		@book.
+	</div>
+
+</Virtualize>*@
+
+
+@code {
+
+	[CascadingParameter]
+	private Task<AuthenticationState>? authenticationState { get; set; }
+	string? email = string.Empty;
+	AuthenticationState a;
+	string profileName;
+
+
+	protected override async Task OnParametersSetAsync()
+	{
+		a = await authenticationState;
+		if (a.User.Identity?.IsAuthenticated ?? false)
+		{
+			email = a.User.FindFirst(c => c.Type == "preferred_username")?.Value;
+			if (!string.IsNullOrEmpty(email))
+			{
+				Console.WriteLine(email);
+			}
+		}
+		 profileName = a.User.Identity?.Name.Replace(" - CDA22 GBG", "'s");
+	}
+
+	UserBookListDto newUserList = new()
+		{
+			Name = "testName1",
+			Description = "Här finns mina bästa böcker",
+			Content = new List<string>() { "190", "203", "299", "101492", "942321" }
+		};
+
+	private async Task CreateNewList()
+	{
+		newUserList.Id = email;
+		newUserList.Name = "test";
+		newUserList.Description = "Dina favvo böker";
+		newUserList.Content = new List<string>(){"32","32"};
+		var response = await _client.PostAsJsonAsync("Booklists/AddList", newUserList);
+	}
+
+}

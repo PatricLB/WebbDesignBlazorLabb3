@@ -18,7 +18,6 @@ public class BookRepository : IRepository<BookDto>
         var host = "localhost";
         var databaseName = "Books";
         var connectionString = $"mongodb://{host}:27017";
-
         var client = new MongoClient(connectionString);
         var database = client.GetDatabase(databaseName);
         _bookCollection = database.GetCollection<BookModel>
@@ -85,6 +84,11 @@ public class BookRepository : IRepository<BookDto>
         var stringToBookDto = JsonConvert.DeserializeObject<BookDto>(bookToString);
 
 		return stringToBookDto;
+	}
+
+	public Task DeleteAsync(object id)
+	{
+		throw new NotImplementedException();
 	}
 
 }

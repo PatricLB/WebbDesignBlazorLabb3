@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Newtonsoft.Json;
 using WebbDesignBlazorLabb3.Server.DataAccess.Models;
@@ -29,14 +30,31 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 		await _bookListCollection.InsertOneAsync(new UserBookListModel()
 		{
 			Id = dtoConverted.Id,
-			Lists = dtoConverted.Lists
-		}) ;
+			Name = dtoConverted.Name,
+			Description= dtoConverted.Description,
+			Content = dtoConverted.Content
+		});
 	}
-	public async Task<UserBookListDto> UpdateAsync(UserBookListDto entity, long id)
+	public async Task<IEnumerable<UserBookListDto>> GetAllAsync()
 	{
-		UserBookListModel dtoConverted = JsonConvert.DeserializeObject<UserBookListModel>(JsonConvert.SerializeObject(entity));
+		var filter = Builders<UserBookListModel>.Filter.Empty;
+		var allBooks = await _bookListCollection.FindAsync(filter);
 
-		throw new NotImplementedException();
+		return allBooks.ToEnumerable()
+			.Select(b => new UserBookListDto()
+			{
+				Id= b.Id,
+				Name = b.Name,
+				Description = b.Description,
+				Content = b.Content
+			});
+	}
+	public async Task UpdateAsync(UserBookListDto entity)
+	{
+		var updateFilter = Builders<UserBookListModel>.Filter.Eq("_id", entity.Id);
+		var updateBooksInList = Builders<UserBookListModel>.Update.Push("Content", entity.Content[0]);
+
+		await _bookListCollection.UpdateOneAsync(updateFilter, updateBooksInList);
 	}
 
 	public Task DeleteAsync(long id)
@@ -44,22 +62,14 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 		throw new NotImplementedException();
 	}
 
-	public Task<IEnumerable<UserBookListDto>> GetAllAsync()
-	{
-		throw new NotImplementedException();
-	}
-
-	public Task<UserBookListDto> GetAsync(object id)
-	{
-		throw new NotImplementedException();
-	}
 
 	public Task<UserBookListDto> GetAsync(long isbn)
 	{
 		throw new NotImplementedException();
 	}
 
-	public Task UpdateAsync(UserBookListDto entity)
+
+	public Task DeleteAsync(object id)
 	{
 		throw new NotImplementedException();
 	}
