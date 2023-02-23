@@ -11,18 +11,18 @@
 		<div class="col-lg-3 col-md-6 col-sm-12 pb-lg-2 p-lg-2">
 			<div class="card mt-2">
 				<div class="card-header">
-					<h5 class="text-center mt-3 text-truncate"><button class="btn btn-link" @onclick="() => GoToBookView(book.Isbn)">@book.Title</button></h5>
+					<h5 class="text-center mt-1 text-truncate"><button class="btn btn-link" @onclick="() => GoToBookView(book.Isbn)">@book.Title</button></h5>
 				</div>
-				<div class="card-body text-center mt-2">
+				<div class="card-body text-center">
 					<img src="@book.ImageLink" class="mx-auto mt-3 align-content-center" height="197" width="128" />
-					<h6 class="card-title mt-2">
+					<h6 class="card-title mt-1">
 						@foreach (var auth in book.Authors)
 						{
-							@auth 
+							@auth
 						}
 						</h6>
 				</div>
-				<div class="text-center col-lg-12">
+				<div class="text-center col-lg-12 mb-2">
 					<button class="btn btn-success mt-2 mx-lg-2">Lägg till i profil</button>
 				</div>
 			</div>

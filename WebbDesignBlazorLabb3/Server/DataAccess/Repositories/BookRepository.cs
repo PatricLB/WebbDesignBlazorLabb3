@@ -57,7 +57,7 @@ public class BookRepository : IRepository<BookDto>
             });
     }
 
-    public async Task DeleteAsync(object id)
+    public async Task DeleteAsync(long id)
     {
         var deleteFilter = Builders<BookModel>.Filter.Eq("Isbn", id);
         await _bookCollection.DeleteOneAsync(deleteFilter);

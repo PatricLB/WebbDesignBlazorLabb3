@@ -3,7 +3,7 @@
 public interface IRepository<T>
 {
     Task AddAsync(T entity);
-    Task DeleteAsync(object id);
+    Task DeleteAsync(long id);
     Task<T> GetAsync(long isbn);
     Task<IEnumerable<T>> GetAllAsync();
     Task UpdateAsync(T entity);

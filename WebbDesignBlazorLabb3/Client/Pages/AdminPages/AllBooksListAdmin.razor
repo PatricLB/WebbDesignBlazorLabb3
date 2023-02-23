@@ -22,7 +22,7 @@
 		<tr>
 		  <th scope="row">@book.Isbn</th>
 		  <th scope="row">@book.Title</th>
-		  <th scope="row">
+		  <th scope="row"> 
 			  @foreach (var auth in book.Authors)
 					{
 						@auth
@@ -30,7 +30,7 @@
 			  </th>
 		  <div class="btn-group-lg">
 					<button class="btn btn-warning" @onclick="() => GoToEdit(book.Isbn)"> Edit </button>
-			  <button class="btn btn-outline-danger"> Delete </button>
+					<button class="btn btn-outline-danger" @onclick="() => DeleteBook(book.Isbn)"> Delete </button>
 		  </div>
 		</tr>
 	</Virtualize>
@@ -54,4 +54,11 @@
 	{
 		UriHelper.NavigateTo($"Editbook/{isbn}");
 	}
+	private async void DeleteBook(long isbn)
+	{
+		await client.DeleteAsync($"book/delete/{isbn}");
+		await GetAllBooks();
+		StateHasChanged();
+	}
+
 }

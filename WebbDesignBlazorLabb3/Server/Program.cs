@@ -14,7 +14,6 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<IRepository<BookDto>, BookRepository>();
 builder.Services.AddScoped<IRepository<UserBookListDto>, UserBookListRepository>();
-builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -62,6 +61,10 @@ app.MapPut("/Book/UpdateBook", async (IRepository<BookDto> bookRep, BookDto book
 app.MapPost("/Booklists/AddList", async (IRepository<UserBookListDto> bookRep, UserBookListDto UserBookListDto) =>
 {
     await bookRep.AddAsync(UserBookListDto);
+});
+app.MapDelete("book/delete/{isbn}", async (IRepository<BookDto> bookRep, long isbn) =>
+{
+    await bookRep.DeleteAsync(isbn);
 });
 
 

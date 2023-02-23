@@ -39,7 +39,7 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 		throw new NotImplementedException();
 	}
 
-	public Task DeleteAsync(object id)
+	public Task DeleteAsync(long id)
 	{
 		throw new NotImplementedException();
 	}
