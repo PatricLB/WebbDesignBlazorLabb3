@@ -21,12 +21,9 @@ public partial class AddBook : ComponentBase
 
     private async Task GetBookInfo(long isbn)
     {
-        HttpResponseMessage response = await client.GetAsync($"https://favbooks.azurewebsites.net/GetBookInfo:{isbn}");
-        response.EnsureSuccessStatusCode();
-        var responseBody = await response.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<BookDto>(responseBody);
+        var response = await client.GetFromJsonAsync<BookDto>($"/GetBookInfo:{isbn}");
 
-        if (result == null)
+        if (response == null)
         {
             bookOk = false;
             trigger = 1;
@@ -35,12 +32,12 @@ public partial class AddBook : ComponentBase
         else
         {
         bookOk = true;
-        bookToAdd.IsbnId = result.IsbnId;
-		bookToAdd.Authors = result.Authors;
-        bookToAdd.Title = result.Title;
-        bookToAdd.Description = result.Description;
-        bookToAdd.Pages = result.Pages;
-        bookToAdd.ImageLink = result.ImageLink;
+        bookToAdd.IsbnId = response.IsbnId;
+		bookToAdd.Authors = response.Authors;
+        bookToAdd.Title = response.Title;
+        bookToAdd.Description = response.Description;
+        bookToAdd.Pages = response.Pages;
+        bookToAdd.ImageLink = response.ImageLink;
         trigger = 1;
         StateHasChanged();
 

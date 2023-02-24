@@ -8,7 +8,7 @@ public class UserBookListDto
 	public string Email { get; set; } = string.Empty;
 	public string Name { get; set; } = string.Empty;
 	public string Description { get; set; } = string.Empty;
-	public List<string> Content { get; set; }
+	public List<string> Content { get; set; } = new();
 
 
 	public UserBookListDto(string id,string email, string name, string desc, List<string> content )
