@@ -7,4 +7,5 @@ public interface IRepository<T>
     Task<T> GetAsync(long isbn);
     Task<IEnumerable<T>> GetAllAsync();
     Task UpdateAsync(T entity);
+	Task<T> GetAsync(string email);
 }

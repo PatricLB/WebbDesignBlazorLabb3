@@ -40,6 +40,16 @@ app.MapRazorPages();
 
 //API funktioner
 
+app.MapPost("/Booklists/AddList", async (IRepository<UserBookListDto> listRep, UserBookListDto UserBookListDto) =>
+{
+    await listRep.AddAsync(UserBookListDto);
+});
+
+app.MapGet("/BookLists/GetList:{email}", async (IRepository<UserBookListDto> listRep, string email) =>
+{
+    return await listRep.GetAsync(email);
+});
+
 app.MapGet("/Book/getAll", async (IRepository<BookDto> bookRep) =>
 {
     return await bookRep.GetAllAsync();
@@ -58,10 +68,6 @@ app.MapPut("/Book/UpdateBook", async (IRepository<BookDto> bookRep, BookDto book
     await bookRep.UpdateAsync(book);
 });
 
-app.MapPost("/Booklists/AddList", async (IRepository<UserBookListDto> bookRep, UserBookListDto UserBookListDto) =>
-{
-    await bookRep.AddAsync(UserBookListDto);
-});
 app.MapDelete("book/delete/{isbn}", async (IRepository<BookDto> bookRep, long isbn) =>
 {
     await bookRep.DeleteAsync(isbn);

@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Newtonsoft.Json;
+using SharpCompress.Common;
 using WebbDesignBlazorLabb3.Server.DataAccess.Models;
 using WebbDesignBlazorLabb3.Shared;
 
@@ -16,7 +17,8 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 	{
 		var host = "localhost";
 		var databaseName = "Books";
-		var connectionString = $"mongodb://{host}:27017";
+		//var connectionString = $"mongodb://{host}:27017";
+		var connectionString = "mongodb+srv://AzureAccount:QBYPavOXnDo04zu3@cluster0.i51me48.mongodb.net/?retryWrites=true&w=majority";
 
 		var client = new MongoClient(connectionString);
 		var database = client.GetDatabase(databaseName);
@@ -30,10 +32,11 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 		await _bookListCollection.InsertOneAsync(new UserBookListModel()
 		{
 			Id = dtoConverted.Id,
+			Email = dtoConverted.Email,
 			Name = dtoConverted.Name,
 			Description= dtoConverted.Description,
 			Content = dtoConverted.Content
-		});
+		});;
 	}
 	public async Task<IEnumerable<UserBookListDto>> GetAllAsync()
 	{
@@ -55,6 +58,16 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 		var updateBooksInList = Builders<UserBookListModel>.Update.Push("Content", entity.Content[0]);
 
 		await _bookListCollection.UpdateOneAsync(updateFilter, updateBooksInList);
+	}
+	public async Task<UserBookListDto> GetAsync(string email)
+	{
+		var filter = Builders<UserBookListModel>.Filter.Eq("Email", email);
+		var list = await _bookListCollection.FindAsync(filter);
+
+		var listToString = JsonConvert.SerializeObject(list);
+		var stringToListDto = JsonConvert.DeserializeObject<UserBookListDto>(listToString);
+
+		return stringToListDto;
 	}
 
 	public Task DeleteAsync(long id)

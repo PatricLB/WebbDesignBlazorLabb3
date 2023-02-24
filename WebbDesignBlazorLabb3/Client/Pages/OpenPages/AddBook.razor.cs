@@ -21,7 +21,7 @@ public partial class AddBook : ComponentBase
 
     private async Task GetBookInfo(long isbn)
     {
-        HttpResponseMessage response = await client.GetAsync($"https://localhost:7294/GetBookInfo:{isbn}");
+        HttpResponseMessage response = await client.GetAsync($"https://favbooks.azurewebsites.net/GetBookInfo:{isbn}");
         response.EnsureSuccessStatusCode();
         var responseBody = await response.Content.ReadAsStringAsync();
         var result = JsonConvert.DeserializeObject<BookDto>(responseBody);

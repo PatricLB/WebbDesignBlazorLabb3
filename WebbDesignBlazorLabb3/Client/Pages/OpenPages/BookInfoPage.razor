@@ -4,6 +4,8 @@
 @inject HttpClient client;
 @inject NavigationManager UriHelper
 
+<AuthorizeView>
+	<Authorized>
 <h3>@currentBook.Title</h3>
 
 <div class="m-4">
@@ -24,6 +26,19 @@
 		</p>
 	<p class="mt-4"> Sidor: @currentBook.Pages</p>
 	</div>
+	</Authorized>
+	<NotAuthorized>
+		@if (ISBN == null)
+		{	
+			<p> No book was loaded </p>
+		}
+		else
+		{
+			<p> You are not logged in! </p>
+		}
+	</NotAuthorized>
+</AuthorizeView>
+
 @code {
 	BookDto currentBook = new();
 	[Parameter]
@@ -32,14 +47,21 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		handeledIsbn = (long)Convert.ToInt64(ISBN);
-		currentBook.Isbn = handeledIsbn;
-		var fetchedBook = (await client.GetFromJsonAsync<BookDto>($"Book/getBook:{currentBook.Isbn}"));
-		currentBook.Title = fetchedBook.Title;
-		currentBook.Authors = fetchedBook.Authors;
-		currentBook.Description = fetchedBook.Description;
-		currentBook.Pages = fetchedBook.Pages;
-		currentBook.ImageLink = fetchedBook.ImageLink;
+		if(ISBN != null)
+		{
+			handeledIsbn = (long)Convert.ToInt64(ISBN);
+			currentBook.Isbn = handeledIsbn;
+			var fetchedBook = (await client.GetFromJsonAsync<BookDto>($"Book/getBook:{currentBook.Isbn}"));
+			currentBook.Title = fetchedBook.Title;
+			currentBook.Authors = fetchedBook.Authors;
+			currentBook.Description = fetchedBook.Description;
+			currentBook.Pages = fetchedBook.Pages;
+			currentBook.ImageLink = fetchedBook.ImageLink;
+		}
+		else
+		{
+			
+		}
 	}
 
 

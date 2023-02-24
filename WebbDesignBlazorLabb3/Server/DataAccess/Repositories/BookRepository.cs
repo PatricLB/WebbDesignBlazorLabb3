@@ -17,7 +17,8 @@ public class BookRepository : IRepository<BookDto>
     {
         var host = "localhost";
         var databaseName = "Books";
-        var connectionString = $"mongodb://{host}:27017";
+        //var connectionString = $"mongodb://{host}:27017";
+        var connectionString = "mongodb+srv://AzureAccount:QBYPavOXnDo04zu3@cluster0.i51me48.mongodb.net/?retryWrites=true&w=majority";
         var client = new MongoClient(connectionString);
         var database = client.GetDatabase(databaseName);
         _bookCollection = database.GetCollection<BookModel>
@@ -91,4 +92,13 @@ public class BookRepository : IRepository<BookDto>
 		throw new NotImplementedException();
 	}
 
+	public Task GetAsync(string email)
+	{
+		throw new NotImplementedException();
+	}
+
+	Task<BookDto> IRepository<BookDto>.GetAsync(string email)
+	{
+		throw new NotImplementedException();
+	}
 }

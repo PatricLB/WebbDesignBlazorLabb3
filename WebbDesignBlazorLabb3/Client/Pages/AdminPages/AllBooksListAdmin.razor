@@ -5,6 +5,8 @@
 @inject HttpClient client;
 @inject NavigationManager UriHelper
 
+<AuthorizeView>
+	<Authorized>
 <h3>Edit Books</h3>
 
 
@@ -36,6 +38,11 @@
 	</Virtualize>
 	</tbody>
 </table>
+	</Authorized>
+	<NotAuthorized>
+		<p> You are not logged in! </p>
+	</NotAuthorized>
+</AuthorizeView>
 
 @code {
 	List<BookDto> BookList = new();

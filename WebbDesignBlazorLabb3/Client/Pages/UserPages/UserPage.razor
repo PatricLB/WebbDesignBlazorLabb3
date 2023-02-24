@@ -5,28 +5,52 @@
 @inject HttpClient _client;
 @inject NavigationManager UriHelper
 
+<AuthorizeView>
+	<Authorized>
+		<h3>@profileName profile!</h3>
 
-<h3>@profileName profile!</h3>
+		<button @onclick="CreateNewList">Skapa din lista</button>
 
-<button @onclick="CreateNewList">Skapa din lista</button>
+		<button @onclick="@LoadBooks">Ladda in böckerna</button>
+		@if (newUserList.Content != null)
+		{
+		<div class="col-3 col-sm-6 col-lg-2 mt-5">
+			<select name="pets" id="pet-select">
+				<option value="">--Välj bok att lägga till i din lista--</option>
+				@foreach (var book in newUserList.Content)
+				{
+					<option>@book</option>
+				}
+			</select>
+		</div>
+			
+		}
 
-<div class="col-3 col-sm-6 col-lg-2">
-<div class="list-group" id="myList" role="tablist">
-  <a class="list-group-item list-group-item-action active" data-toggle="list" role="tab">Home</a>
-  <a class="list-group-item list-group-item-action" data-toggle="list"  role="tab">Profile</a>
-  <a class="list-group-item list-group-item-action" data-toggle="list"  role="tab">Messages</a>
-  <a class="list-group-item list-group-item-action" data-toggle="list"  role="tab">Settings</a>
-</div>
-</div>
-
-@*<Virtualize Items="UserList" Context="book">
-	<div>
-		@book.
-	</div>
-
-</Virtualize>*@
-
-
+		<div class="col-lg-6 col-md-8 col-sm-12">
+			<Virtualize Items="booksInList" Context="book">
+				<div class="col-lg-3 col-md-6 col-sm-12 pb-lg-2 p-lg-2">
+					<div class="card mt-2">
+						<div class="card-header">
+							<h5 class="text-center mt-1 text-truncate"><button class="btn btn-link">@book.Title</button></h5>
+						</div>
+						<div class="card-body text-center">
+							<img src="@book.ImageLink" class="mx-auto mt-3 align-content-center" height="197" width="128" />
+							<h6 class="card-title mt-1">
+								@foreach (var auth in book.Authors)
+								{
+									@auth
+								}
+							</h6>
+						</div>
+					</div>
+				</div>
+			</Virtualize>
+		</div>
+	</Authorized>
+	<NotAuthorized>
+		<p> You are not logged in! </p>
+	</NotAuthorized>
+</AuthorizeView>
 @code {
 
 	[CascadingParameter]
@@ -34,6 +58,11 @@
 	string? email = string.Empty;
 	AuthenticationState a;
 	string profileName;
+
+	BookDto recievedBook = new();
+	List<BookDto> booksInList = new();
+	UserBookListDto newUserList = new();
+	UserBookListDto currentUserList = new();
 
 
 	protected override async Task OnParametersSetAsync()
@@ -47,23 +76,42 @@
 				Console.WriteLine(email);
 			}
 		}
-		 profileName = a.User.Identity?.Name.Replace(" - CDA22 GBG", "'s");
+		profileName = a.User.Identity?.Name.Replace(" - CDA22 GBG", "'s");
 	}
-
-	UserBookListDto newUserList = new()
-		{
-			Name = "testName1",
-			Description = "Här finns mina bästa böcker",
-			Content = new List<string>() { "190", "203", "299", "101492", "942321" }
-		};
 
 	private async Task CreateNewList()
 	{
 		newUserList.Id = email;
+		newUserList.Email = email;
 		newUserList.Name = "test";
 		newUserList.Description = "Dina favvo böker";
-		newUserList.Content = new List<string>(){"32","32"};
+		newUserList.Content = new List<string>() { "9780434020942", "9780593082959" };
 		var response = await _client.PostAsJsonAsync("Booklists/AddList", newUserList);
+	}
+
+	private async Task LoadList()
+	{
+		var fetchedList = (await _client.GetFromJsonAsync<UserBookListDto>($"/BookLists/GetList:{email}"));
+		currentUserList = fetchedList;
+
+		Console.WriteLine(currentUserList);
+	}
+
+	private async Task LoadBooks()
+	{
+
+		await LoadList();
+		foreach (var book in newUserList.Content)
+		{
+			var fetchedBook = (await _client.GetFromJsonAsync<BookDto>($"Book/getBook:{book}"));
+			recievedBook.Title = fetchedBook.Title;
+			recievedBook.Authors = fetchedBook.Authors;
+			recievedBook.Description = fetchedBook.Description;
+			recievedBook.Pages = fetchedBook.Pages;
+			recievedBook.ImageLink = fetchedBook.ImageLink;
+			booksInList.Add(recievedBook);
+		}
+
 	}
 
 }

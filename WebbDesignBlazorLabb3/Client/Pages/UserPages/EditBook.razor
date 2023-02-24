@@ -6,7 +6,8 @@
 @inject NavigationManager UriHelper
 
 <h1> Edit book</h1>
-
+<AuthorizeView>
+	<Authorized>
 @if (trigger == 0)
 {
 <div class="input-group">
@@ -64,6 +65,11 @@ else if (trigger == 2)
 {
 	<p>Boken kunde inte uppdateras. Fel inträffade </p>
 }
+	</Authorized>
+	<NotAuthorized>
+		<p> You are not allowed to view this page! </p>
+	</NotAuthorized>
+</AuthorizeView>
 
 @code {
 	[Parameter]
