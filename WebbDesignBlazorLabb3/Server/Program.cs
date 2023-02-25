@@ -7,7 +7,6 @@ using static WebbDesignBlazorLabb3.Server.DataAccess.ParseBookBaseClass;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
@@ -54,6 +53,7 @@ app.MapGet("/Book/getAll", async (IRepository<BookDto> bookRep) =>
 {
     return await bookRep.GetAllAsync();
 });
+
 app.MapGet("/Book/getBook:{isbn}", async (IRepository<BookDto> bookRep, long isbn) =>
 {
     return await bookRep.GetAsync(isbn);
@@ -88,7 +88,6 @@ app.MapGet("/GetBookInfo:{isbn}", async (long isbn) =>
 
     returnBook = new();
 
-
     returnBook.Title = result.items[0].volumeInfo.title;
 
 	if (result.items[0].volumeInfo.authors == null)
@@ -108,7 +107,6 @@ app.MapGet("/GetBookInfo:{isbn}", async (long isbn) =>
     else
         returnBook.Description = "No description available.";
 
-
     if (result.items[0].volumeInfo.imageLinks != null)
         returnBook.ImageLink = result.items[0].volumeInfo.imageLinks.thumbnail;
     else
@@ -117,9 +115,6 @@ app.MapGet("/GetBookInfo:{isbn}", async (long isbn) =>
     return returnBook;
 
 });
-
-// Ifall jag behöver en Hub till projectet är det klart
-//app.MapHub<BookHub>("/hubs/Bookhub");
 
 app.MapFallbackToFile("index.html");
 

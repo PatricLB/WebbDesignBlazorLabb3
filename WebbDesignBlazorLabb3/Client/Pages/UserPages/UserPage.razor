@@ -9,43 +9,88 @@
 	<Authorized>
 		<h3>@profileName profile!</h3>
 
-		<button @onclick="CreateNewList">Skapa din lista</button>
-
-		<button @onclick="@LoadBooks">Ladda in böckerna</button>
-		@if (newUserList.Content != null)
-		{
-		<div class="col-3 col-sm-6 col-lg-2 mt-5">
-			<select name="pets" id="pet-select">
-				<option value="">--Välj bok att lägga till i din lista--</option>
-				@foreach (var book in newUserList.Content)
-				{
-					<option>@book</option>
-				}
-			</select>
-		</div>
-			
-		}
-
-		<div class="col-lg-6 col-md-8 col-sm-12">
-			<Virtualize Items="booksInList" Context="book">
-				<div class="col-lg-3 col-md-6 col-sm-12 pb-lg-2 p-lg-2">
-					<div class="card mt-2">
-						<div class="card-header">
-							<h5 class="text-center mt-1 text-truncate"><button class="btn btn-link">@book.Title</button></h5>
-						</div>
-						<div class="card-body text-center">
-							<img src="@book.ImageLink" class="mx-auto mt-3 align-content-center" height="197" width="128" />
-							<h6 class="card-title mt-1">
-								@foreach (var auth in book.Authors)
-								{
-									@auth
-								}
-							</h6>
-						</div>
+		<!--Modal-->
+		<div class="modal fade" id="addListModal" tabindex="5" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Skapa en lista</h5>
+						<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<EditForm Model="@newUserList" Context="book">
+							<div class="form-group row">
+								<label class="col-md-2 col-form-label-lg"> Namn: </label>
+								<div class=" mb-2">
+									<InputText class="form-control" @bind-Value="newUserList.Name" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-md-2 col-form-label-lg"> Beskrivning: </label>
+								<div class=" mb-2">
+									<InputText class="form-control" @bind-Value="newUserList.Description"/>
+								</div>
+							</div>
+						</EditForm>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-success" @onclick="CreateNewList" data-bs-dismiss="modal">Skapa din lista</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 					</div>
 				</div>
-			</Virtualize>
+			</div>
 		</div>
+
+
+		@if (loadingList)
+		{
+			<div class="spinner-border mt-4"></div>
+		}
+		else if (listExists && !loadingList)
+		{
+			if (currentUserList.Content.Count == 0)
+			{
+				<p> Din lista är tom. </p>
+				<button class="btn btn-success" @onclick="SendUserToBookPage">Lägg till några bokar!</button>
+			}
+			else
+			{
+			<p class="mt-4"> Din lista! </p>
+			<p class="mt-4"> Namn: @currentUserList.Name </p>
+			<p class=""> Beskrivning: @currentUserList.Description </p>
+			<div class="border border-secondary d-inline-flex flex-wrap container-fluid">
+				<Virtualize Items="booksInList" Context="book">
+					<div class="col-lg-2 col-md-4 col-sm-12 pb-lg-2 p-lg-2">
+						<div class="card mt-2">
+							<div class="card-header">
+								<h5 class="text-center mt-1 text-truncate"><button class="btn btn-link">@book.Title</button></h5>
+							</div>
+							<div class="card-body text-center">
+								<img src="@book.ImageLink" class="mx-auto mt-3 align-content-center" height="197" width="128" />
+								<h6 class="card-title mt-1">
+									@foreach (var auth in book.Authors)
+									{
+										@auth
+									}
+								</h6>
+							</div>
+						</div>
+					</div>
+				</Virtualize>
+			</div>
+			}
+		}
+		else if (!listExists && !loadingList)
+		{
+			<p> Du har ingen lista. Skapa en?</p>
+			<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addListModal">
+				Skapa din lista
+				</button>
+			@**@
+		}
+
 	</Authorized>
 	<NotAuthorized>
 		<p> You are not logged in! </p>
@@ -58,8 +103,10 @@
 	string? email = string.Empty;
 	AuthenticationState a;
 	string profileName;
+	bool listExists = false;
+	bool loadingList = true;
 
-	BookDto recievedBook = new();
+	BookDto recievedBook;
 	List<BookDto> booksInList = new();
 	UserBookListDto newUserList = new();
 	UserBookListDto currentUserList = new();
@@ -73,45 +120,65 @@
 			email = a.User.FindFirst(c => c.Type == "preferred_username")?.Value;
 			if (!string.IsNullOrEmpty(email))
 			{
-				Console.WriteLine(email);
+				profileName = a.User.Identity?.Name.Replace(" - CDA22 GBG", "'s");
 			}
 		}
-		profileName = a.User.Identity?.Name.Replace(" - CDA22 GBG", "'s");
+		await LoadBooks();
+
+		StateHasChanged();
 	}
+
+	private void SendUserToBookPage()
+	{
+		UriHelper.NavigateTo($"/BooksPage");
+	}
+
 
 	private async Task CreateNewList()
 	{
 		newUserList.Id = email;
 		newUserList.Email = email;
-		newUserList.Name = "test";
-		newUserList.Description = "Dina favvo böker";
-		newUserList.Content = new List<string>() { "9780434020942", "9780593082959" };
-		var response = await _client.PostAsJsonAsync("Booklists/AddList", newUserList);
+		newUserList.Content = new List<string>();
+		await _client.PostAsJsonAsync("Booklists/AddList", newUserList);
+		await LoadBooks();
+		StateHasChanged();
 	}
 
 	private async Task LoadList()
 	{
 		var fetchedList = (await _client.GetFromJsonAsync<UserBookListDto>($"/BookLists/GetList:{email}"));
 		currentUserList = fetchedList;
-
-		Console.WriteLine(currentUserList);
 	}
 
 	private async Task LoadBooks()
 	{
-
+		booksInList.RemoveRange(0, booksInList.Count);
+		BookDto fetchedBook;
 		await LoadList();
-		foreach (var book in newUserList.Content)
-		{
-			var fetchedBook = (await _client.GetFromJsonAsync<BookDto>($"Book/getBook:{book}"));
-			recievedBook.Title = fetchedBook.Title;
-			recievedBook.Authors = fetchedBook.Authors;
-			recievedBook.Description = fetchedBook.Description;
-			recievedBook.Pages = fetchedBook.Pages;
-			recievedBook.ImageLink = fetchedBook.ImageLink;
-			booksInList.Add(recievedBook);
-		}
 
+		if (currentUserList == null)
+		{
+			listExists = false;
+			loadingList = false;
+		}
+		else
+		{
+			loadingList = true;
+			listExists = true;
+			foreach (var book in currentUserList.Content)
+			{
+				recievedBook = new();
+				fetchedBook = (await _client.GetFromJsonAsync<BookDto>($"Book/getBook:{book}"));
+				recievedBook.Isbn = fetchedBook.Isbn;
+				recievedBook.Title = fetchedBook.Title;
+				recievedBook.Authors = fetchedBook.Authors;
+				recievedBook.Description = fetchedBook.Description;
+				recievedBook.Pages = fetchedBook.Pages;
+				recievedBook.ImageLink = fetchedBook.ImageLink;
+				booksInList.Add(recievedBook);
+			}
+			loadingList = false;
+		}
 	}
 
 }

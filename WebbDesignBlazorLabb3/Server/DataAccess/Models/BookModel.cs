@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using WebbDesignBlazorLabb3.Shared;
 
 namespace WebbDesignBlazorLabb3.Server.DataAccess.Models;
 

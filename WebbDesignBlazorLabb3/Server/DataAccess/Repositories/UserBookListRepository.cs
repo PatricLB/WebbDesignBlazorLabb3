@@ -61,9 +61,6 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 	}
 	public async Task<UserBookListDto> GetAsync(string email)
 	{
-		//var filter = Builders<UserBookListModel>.Filter.Eq("Email", email);
-		//var list = await _bookListCollection.FindAsync(filter);
-
 		var list = await _bookListCollection.Find(x => x.Email == email).FirstOrDefaultAsync();
 
 		var listToString = JsonConvert.SerializeObject(list);
