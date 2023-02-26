@@ -63,21 +63,29 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 		await _bookListCollection.UpdateOneAsync(updateFilter, updateBook);
 
 	}
+	//Lägger till böcker i databasen för användarens lista
 	public async Task UpdateAsync(string email, long isbn)
 	{
-		var updateFilter = Builders<UserBookListModel>.Filter.Eq("_id", email);
-		var updateBooksInList = Builders<UserBookListModel>.Update.Push("Content", isbn);
+		var addFilter = Builders<UserBookListModel>.Filter.Eq("_id", email);
+		var addBooksInList = Builders<UserBookListModel>.Update.Push("Content", isbn);
 
-		await _bookListCollection.UpdateOneAsync(updateFilter, updateBooksInList);
+		await _bookListCollection.UpdateOneAsync(addFilter, addBooksInList);
 	}
 	public async Task<UserBookListDto> GetAsync(string email)
 	{
-		var list = await _bookListCollection.Find(x => x.Email == email).FirstOrDefaultAsync();
+		var list = await _bookListCollection.Find(e => e.Email == email).FirstOrDefaultAsync();
 
 		var listToString = JsonConvert.SerializeObject(list);
 		var stringToListDto = JsonConvert.DeserializeObject<UserBookListDto>(listToString);
 
 		return stringToListDto;
+	}
+	public async Task DeleteAsync(string email, long isbn)
+	{
+		var removeFilter = Builders<UserBookListModel>.Filter.Eq("_id", email);
+		var removeBookInList = Builders<UserBookListModel>.Update.Pull("Content", isbn);
+
+		await _bookListCollection.UpdateOneAsync(removeFilter, removeBookInList);
 	}
 
 	public Task DeleteAsync(long id)
@@ -90,4 +98,5 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 	{
 		throw new NotImplementedException();
 	}
+
 }

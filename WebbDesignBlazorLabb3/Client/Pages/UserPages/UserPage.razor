@@ -9,7 +9,7 @@
 	<Authorized>
 		<h3>@profileName profile!</h3>
 
-		<!--Modal-->
+		<!--Modal för User List-->
 		<div class="modal fade" id="addListModal" tabindex="5" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
@@ -30,7 +30,7 @@
 							<div class="form-group row">
 								<label class="col-md-2 col-form-label-lg"> Beskrivning: </label>
 								<div class=" mb-2">
-									<InputText class="form-control" @bind-Value="newUserList.Description"/>
+									<InputText class="form-control" @bind-Value="newUserList.Description" />
 								</div>
 							</div>
 						</EditForm>
@@ -42,7 +42,6 @@
 				</div>
 			</div>
 		</div>
-
 
 		@if (loadingList)
 		{
@@ -57,38 +56,41 @@
 			}
 			else
 			{
-			<p class="mt-4"> Din lista! </p>
-			<p class="mt-4"> Namn: @currentUserList.Name </p>
-			<p class=""> Beskrivning: @currentUserList.Description </p>
-			<div class="border border-secondary d-inline-flex flex-wrap container-fluid">
-				<Virtualize Items="booksInList" Context="book">
-					<div class="col-lg-2 col-md-4 col-sm-12 pb-lg-2 p-lg-2">
-						<div class="card mt-2">
-							<div class="card-header">
-								<h5 class="text-center mt-1 text-truncate"><button class="btn btn-link">@book.Title</button></h5>
-							</div>
-							<div class="card-body text-center">
-								<img src="@book.ImageLink" class="mx-auto mt-3 align-content-center" height="197" width="128" />
-								<h6 class="card-title mt-1">
-									@foreach (var auth in book.Authors)
+
+				<p class="mt-4">Namn: @currentUserList.Name </p>
+				<p class=""> Beskrivning: @currentUserList.Description </p>
+				<button class="btn btn-warning" value="ändra" @onclick="ToggleEdit">Ändra</button>
+				<div class="border border-secondary d-inline-flex flex-wrap container-fluid">
+					<Virtualize Items="booksInList" Context="book">
+						<div class="col-lg-2 col-md-4 col-sm-12 pb-lg-2 p-lg-2">
+							<div class="card mt-2">
+								<div class="card-header">
+									@if (isListEditable)
 									{
-										@auth
+										<button class="btn btn-xs btn-danger"  @onclick="() => RemoveBookFromList(book.Isbn)">X</button>
 									}
-								</h6>
+									<h5 class="text-center mt-1 text-truncate"><button class="btn btn-link">@book.Title</button></h5>
+								</div>
+								<div class="card-body text-center">
+									<img src="@book.ImageLink" class="mx-auto mt-3 align-content-center" height="197" width="128" />
+									<h6 class="card-title mt-1">
+										@foreach (var auth in book.Authors)
+										{
+											@auth
+										}
+									</h6>
+								</div>
 							</div>
 						</div>
-					</div>
-				</Virtualize>
-			</div>
+					</Virtualize>
+				</div>
 			}
 		}
 		else if (!listExists && !loadingList)
 		{
 			<p> Du har ingen lista. Skapa en?</p>
-			<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addListModal">
-				Skapa din lista
-				</button>
-			@**@
+			<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addListModal">Skapa din lista</button>
+
 		}
 
 	</Authorized>
@@ -106,6 +108,7 @@
 	string profileName;
 	bool listExists = false;
 	bool loadingList = true;
+	bool isListEditable = false;
 
 	BookDto recievedBook;
 	List<BookDto> booksInList = new();
@@ -128,10 +131,31 @@
 
 		StateHasChanged();
 	}
+	private void ToggleEdit()
+	{
+		if (isListEditable)
+		{
+			isListEditable = false;
+
+		}
+		else
+		{
+			isListEditable = true;
+		}
+		StateHasChanged();
+	}
 
 	private void SendUserToBookPage()
 	{
-		UriHelper.NavigateTo($"/BooksPage");
+		UriHelper.NavigateTo("/BooksPage");
+	}
+
+	private async Task RemoveBookFromList(long isbn)
+	{
+		await _client.DeleteAsync($"BookLists/RemoveBookFromList/{currentUserList.Email}/{isbn}");
+		await LoadBooks();
+		StateHasChanged();
+
 	}
 
 

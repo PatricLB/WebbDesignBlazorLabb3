@@ -2,7 +2,7 @@
 @using Newtonsoft.Json;
 @using WebbDesignBlazorLabb3.Shared;
 
-@inject HttpClient client;
+@inject HttpClient _client;
 @inject NavigationManager UriHelper
 
 <AuthorizeView>
@@ -29,7 +29,7 @@
 		</div>
 
 
-		<h3>Edit Books</h3>
+		<h3>Edit Books in database</h3>
 		<table class="table table-striped table-hover">
 			<thead>
 				<tr>
@@ -52,10 +52,10 @@
 						</th>
 						<div class="btn-group-lg">
 							<button class="btn btn-warning" @onclick="() => GoToEdit(book.Isbn)"> Edit </button>
-							<button type="button" class="btn btn-outline-danger" @onclick="() =>BookToRemove(book.Isbn)" data-bs-toggle="modal" data-bs-target="#removeBookModal">
-								Delete
-							</button>
-							
+							@if (email == "patric.lovgren.berg@iths.se")
+							{
+								<button type="button" class="btn btn-outline-danger" @onclick="() =>BookToRemove(book.Isbn)" data-bs-toggle="modal" data-bs-target="#removeBookModal">Delete</button>
+							}
 						</div>
 					</tr>
 				</Virtualize>
@@ -68,21 +68,39 @@
 </AuthorizeView>
 
 @code {
-	//@onclick="() => DeleteBook(book.Isbn)"
+	
+	[CascadingParameter]
+	private Task<AuthenticationState>? authenticationState { get; set; }
+
+	string? email = string.Empty;
+	AuthenticationState a;
+
 	List<BookDto> BookList = new();
 	long bookToRemove;
-	private void BookToRemove(long isbn)
+
+	protected override async Task OnParametersSetAsync()
 	{
-		bookToRemove = isbn;
+		a = await authenticationState;
+		if (a.User.Identity?.IsAuthenticated ?? false)
+		{
+			email = a.User.FindFirst(c => c.Type == "preferred_username")?.Value;
+
+		}
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await GetAllBooks();
 	}
 
+	private void BookToRemove(long isbn)
+	{
+		bookToRemove = isbn;
+	}
+
 	private async Task GetAllBooks()
 	{
-		BookList = (await client.GetFromJsonAsync<IEnumerable<BookDto>>("book/getAll")).ToList();
+		BookList = (await _client.GetFromJsonAsync<IEnumerable<BookDto>>("book/getAll")).ToList();
 	}
 
 	private void GoToEdit(long isbn)
@@ -91,7 +109,8 @@
 	}
 	private async void DeleteBook(long isbn)
 	{
-		await client.DeleteAsync($"book/delete/{isbn}");
+		
+		await _client.DeleteAsync($"book/delete/{isbn}");
 		await GetAllBooks();
 		StateHasChanged();
 	}

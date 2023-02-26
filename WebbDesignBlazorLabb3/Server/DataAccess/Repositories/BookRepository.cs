@@ -56,9 +56,9 @@ public class BookRepository : IRepository<BookDto>
             });
     }
 
-    public async Task DeleteAsync(long id)
+    public async Task DeleteAsync(long isbn)
     {
-        var deleteFilter = Builders<BookModel>.Filter.Eq("Isbn", id);
+        var deleteFilter = Builders<BookModel>.Filter.Eq("Isbn", isbn);
         await _bookCollection.DeleteOneAsync(deleteFilter);
     }
 
@@ -78,7 +78,7 @@ public class BookRepository : IRepository<BookDto>
 
     public async Task<BookDto> GetAsync(long isbn)
     {
-		var book = await _bookCollection.Find(x => x.Isbn == isbn).FirstOrDefaultAsync();
+		var book = await _bookCollection.Find(b => b.Isbn == isbn).FirstOrDefaultAsync();
 
         var bookToString = JsonConvert.SerializeObject(book);
         var stringToBookDto = JsonConvert.DeserializeObject<BookDto>(bookToString);
@@ -86,19 +86,18 @@ public class BookRepository : IRepository<BookDto>
 		return stringToBookDto;
 	}
 
-	public Task DeleteAsync(object id)
-	{
-		throw new NotImplementedException();
-	}
-
-	public Task GetAsync(string email)
-	{
-		throw new NotImplementedException();
-	}
-
 	Task<BookDto> IRepository<BookDto>.GetAsync(string email)
 	{
 		throw new NotImplementedException();
 	}
 
+	public Task DeleteAsync(BookDto entity)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task DeleteAsync(string email, long isbn)
+	{
+		throw new NotImplementedException();
+	}
 }
