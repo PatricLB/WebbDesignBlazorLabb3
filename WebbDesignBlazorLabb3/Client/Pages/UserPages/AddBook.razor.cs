@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System.Net.Http.Json;
 using WebbDesignBlazorLabb3.Shared;
 
-namespace WebbDesignBlazorLabb3.Client.Pages.OpenPages;
+namespace WebbDesignBlazorLabb3.Client.Pages.UserPages;
 
 public partial class AddBook : ComponentBase
 {
@@ -28,26 +28,26 @@ public partial class AddBook : ComponentBase
             bookOk = false;
             trigger = 1;
             StateHasChanged();
-		}
+        }
         else
         {
-        bookOk = true;
-        bookToAdd.IsbnId = response.IsbnId;
-		bookToAdd.Authors = response.Authors;
-        bookToAdd.Title = response.Title;
-        bookToAdd.Description = response.Description;
-        bookToAdd.Pages = response.Pages;
-        bookToAdd.ImageLink = response.ImageLink;
-        trigger = 1;
-        StateHasChanged();
+            bookOk = true;
+            bookToAdd.IsbnId = response.IsbnId;
+            bookToAdd.Authors = response.Authors;
+            bookToAdd.Title = response.Title;
+            bookToAdd.Description = response.Description;
+            bookToAdd.Pages = response.Pages;
+            bookToAdd.ImageLink = response.ImageLink;
+            trigger = 1;
+            StateHasChanged();
 
         }
     }
 
     private async Task SubmitBook()
     {
-		await _client.PostAsJsonAsync("Book/addBook", bookToAdd);
+        await _client.PostAsJsonAsync("Book/addBook", bookToAdd);
         trigger = 3;
-	}
+    }
 
 }

@@ -24,12 +24,12 @@
 	<p class="mt-4"> Sidor: @currentBook.Pages</p>
 	
 	</div>
-		<button type="Submit" class="btn btn-info m-2" @onclick="SendUserBack">Gå tillbaka</button>
+		<button type="Submit" class="btn btn-info" @onclick="SendUserBack">Gå tillbaka</button>
 	<AuthorizeView>
 		<Authorized>
 		@if (currentUserList.Content.Find(x => x == handeledIsbn) != handeledIsbn)
 		{
-			<button class="btn btn-success mt-2 mx-lg-2" @onclick="() => AddBookToList(handeledIsbn, email)">Lägg till i profil</button>
+			<button class="btn btn-success m-2 mx-lg-2" @onclick="() => AddBookToList(handeledIsbn, email)">Lägg till i profil</button>
 		}
 		else
 		{
@@ -45,73 +45,5 @@
 	</AuthorizeView>
 
 @code {
-	BookDto currentBook = new();
-	[Parameter]
-	public string ISBN { get; set; }
-	public long handeledIsbn { get; set; }
 
-	[CascadingParameter]
-	private Task<AuthenticationState>? authenticationState { get; set; }
-
-	string? email = string.Empty;
-	AuthenticationState a;
-	UserBookListDto currentUserList = new();
-
-	protected override async Task OnInitializedAsync()
-	{
-		if(ISBN != null)
-		{
-			handeledIsbn = (long)Convert.ToInt64(ISBN);
-			currentBook.Isbn = handeledIsbn;
-
-			var fetchedBook = (await _client.GetFromJsonAsync<BookDto>($"Book/getBook:{currentBook.Isbn}"));
-
-			currentBook.Title = fetchedBook.Title;
-			currentBook.Authors = fetchedBook.Authors;
-			currentBook.Description = fetchedBook.Description;
-			currentBook.Pages = fetchedBook.Pages;
-			currentBook.ImageLink = fetchedBook.ImageLink;
-		}
-		else
-		{
-			
-		}
-	}
-	protected override async Task OnParametersSetAsync()
-	{
-		a = await authenticationState;
-		if (a.User.Identity?.IsAuthenticated ?? false)
-		{
-			email = a.User.FindFirst(c => c.Type == "preferred_username")?.Value;
-			if (!string.IsNullOrEmpty(email))
-			{
-
-			}
-
-			await LoadList();
-		}
-
-	}
-
-	private async Task LoadList()
-	{
-		var fetchedList = (await _client.GetFromJsonAsync<UserBookListDto>($"/BookLists/GetList:{email}"));
-		currentUserList = fetchedList;
-	}
-
-	private async void AddBookToList(long isbn, string email)
-	{
-		if (currentUserList != null)
-		{
-			currentUserList.Content.Add(isbn);
-			await _client.PutAsJsonAsync("/BookLists/AddBookToList", currentUserList);
-		}
-
-	}
-
-
-	private void SendUserBack()
-	{
-		UriHelper.NavigateTo($"/BooksPage");
-	}
 }
