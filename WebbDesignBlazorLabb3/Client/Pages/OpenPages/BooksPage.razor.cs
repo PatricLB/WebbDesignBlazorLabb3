@@ -13,8 +13,9 @@ public partial class BooksPage :ComponentBase
 	string? email = string.Empty;
 
 	List<BookDto> BookList = new();
-
 	UserBookListDto currentUserList = new();
+
+	bool loadingList = true;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -30,7 +31,6 @@ public partial class BooksPage :ComponentBase
 			{
 
 			}
-
 			await LoadList();
 		}
 
@@ -40,6 +40,8 @@ public partial class BooksPage :ComponentBase
 	private async Task GetAllBooks()
 	{
 		BookList = (await _client.GetFromJsonAsync<IEnumerable<BookDto>>("book/getAll")).ToList();
+		loadingList = false;
+
 	}
 
 	private void GoToBookView(long isbn)
@@ -50,6 +52,7 @@ public partial class BooksPage :ComponentBase
 	{
 		var fetchedList = (await _client.GetFromJsonAsync<UserBookListDto>($"/BookLists/GetList:{email}"));
 		currentUserList = fetchedList;
+		
 	}
 
 	private async void AddBookToList(long isbn, string email)
