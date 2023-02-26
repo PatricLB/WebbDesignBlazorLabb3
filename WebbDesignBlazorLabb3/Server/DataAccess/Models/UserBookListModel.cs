@@ -13,6 +13,6 @@ public class UserBookListModel
 	[BsonElement]
 	public string Description { get; set; }
 	[BsonElement]
-	public List<string> Content { get; set; }
+	public List<long> Content { get; set; }
 
 }

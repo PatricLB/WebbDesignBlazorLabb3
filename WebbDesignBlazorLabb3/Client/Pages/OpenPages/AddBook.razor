@@ -3,7 +3,7 @@
 @using Newtonsoft.Json;
 @using WebbDesignBlazorLabb3.Shared;
 
-@inject HttpClient client;
+@inject HttpClient _client;
 
 <h3>Add a Book!</h3>
 
@@ -40,7 +40,7 @@
 			</span>
 		</p>
 		<p class="mt-4"> Sidor: @bookToAdd.Pages</p>
-		<p> Man kan ändra Titel,Beskrivning och sidor i ett senare tillfälle.</p>
+		<p> Man kan ändra Titel, Beskrivning och Sidor i ett senare tillfälle.</p>
 	</div>
 
 	<EditForm Model="bookToAdd" OnSubmit="@SubmitBook">
@@ -61,11 +61,6 @@ else if (trigger == 3)
 {
 	<p> Bok Tillagd!</p>
 }
-
-<!--
-	//test ISBN
-	//9780141184944
--->
 
 @code{
 

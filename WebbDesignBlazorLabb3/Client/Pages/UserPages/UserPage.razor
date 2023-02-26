@@ -100,6 +100,7 @@
 
 	[CascadingParameter]
 	private Task<AuthenticationState>? authenticationState { get; set; }
+
 	string? email = string.Empty;
 	AuthenticationState a;
 	string profileName;
@@ -138,7 +139,7 @@
 	{
 		newUserList.Id = email;
 		newUserList.Email = email;
-		newUserList.Content = new List<string>();
+		newUserList.Content = new List<long>();
 		await _client.PostAsJsonAsync("Booklists/AddList", newUserList);
 		await LoadBooks();
 		StateHasChanged();

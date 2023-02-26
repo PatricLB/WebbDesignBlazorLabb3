@@ -21,7 +21,7 @@ public partial class AddBook : ComponentBase
 
     private async Task GetBookInfo(long isbn)
     {
-        var response = await client.GetFromJsonAsync<BookDto>($"/GetBookInfo:{isbn}");
+        var response = await _client.GetFromJsonAsync<BookDto>($"/GetBookInfo:{isbn}");
 
         if (response == null)
         {
@@ -46,7 +46,7 @@ public partial class AddBook : ComponentBase
 
     private async Task SubmitBook()
     {
-		var response = await client.PostAsJsonAsync("Book/addBook", bookToAdd);
+		await _client.PostAsJsonAsync("Book/addBook", bookToAdd);
         trigger = 3;
 	}
 

@@ -2,7 +2,7 @@
 @using Newtonsoft.Json;
 @using WebbDesignBlazorLabb3.Shared;
 
-@inject HttpClient client;
+@inject HttpClient _client;
 @inject NavigationManager UriHelper
 
 <h3 class="text-center">Alla böcker</h3>
@@ -20,10 +20,26 @@
 						{
 							@auth
 						}
-						</h6>
+					</h6>
 				</div>
 				<div class="text-center col-lg-12 mb-2">
-					<button class="btn btn-success mt-2 mx-lg-2">Lägg till i profil</button>
+					<AuthorizeView>
+						<Authorized>
+
+							@if(currentUserList.Content.Find(x => x == book.Isbn) != book.Isbn)
+								{
+									<button class="btn btn-success mt-2 mx-lg-2" @onclick="() => AddBookToList(book.Isbn, email)">Lägg till i profil</button>
+								}
+								else
+								{
+									<p>Boken är i din lista!</p>
+								}
+
+						</Authorized>
+						<NotAuthorized>
+							<p> Logga in för att lägga till </p>
+							</NotAuthorized>
+					</AuthorizeView>
 				</div>
 			</div>
 		</div>
@@ -31,27 +47,59 @@
 </div>
 
 @code {
+	[CascadingParameter]
+	private Task<AuthenticationState>? authenticationState { get; set; }
+	AuthenticationState a;
+	string? email = string.Empty;
 
 	List<BookDto> BookList = new();
+
+	UserBookListDto currentUserList = new();
 
 	protected override async Task OnInitializedAsync()
 	{
 		await GetAllBooks();
 	}
+	protected override async Task OnParametersSetAsync()
+	{
+		a = await authenticationState;
+		if (a.User.Identity?.IsAuthenticated ?? false)
+		{
+			email = a.User.FindFirst(c => c.Type == "preferred_username")?.Value;
+			if (!string.IsNullOrEmpty(email))
+			{
+
+			}
+
+		await LoadList();
+		}
+
+	}
+
 
 	private async Task GetAllBooks()
 	{
-		BookList = (await client.GetFromJsonAsync<IEnumerable<BookDto>>("book/getAll")).ToList();
+		BookList = (await _client.GetFromJsonAsync<IEnumerable<BookDto>>("book/getAll")).ToList();
 	}
 
 	private void GoToBookView(long isbn)
 	{
 		UriHelper.NavigateTo($"Book/{isbn}");
 	}
-
-	private async Task AddBookToList()
+	private async Task LoadList()
 	{
-		
+		var fetchedList = (await _client.GetFromJsonAsync<UserBookListDto>($"/BookLists/GetList:{email}"));
+		currentUserList = fetchedList;
+	}
+
+	private async void AddBookToList(long isbn, string email)
+	{
+		if (currentUserList != null)
+		{
+			currentUserList.Content.Add(isbn);
+			await _client.PutAsJsonAsync("/BookLists/AddBookToList", currentUserList);
+		}
+
 	}
 
 	/*

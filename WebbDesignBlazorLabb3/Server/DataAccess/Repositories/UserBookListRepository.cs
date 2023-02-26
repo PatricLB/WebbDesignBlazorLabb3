@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Microsoft.Graph;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Newtonsoft.Json;
@@ -52,10 +53,20 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 				Content = b.Content
 			});
 	}
+
 	public async Task UpdateAsync(UserBookListDto entity)
 	{
 		var updateFilter = Builders<UserBookListModel>.Filter.Eq("_id", entity.Id);
-		var updateBooksInList = Builders<UserBookListModel>.Update.Push("Content", entity.Content[0]);
+		var updateBook = Builders<UserBookListModel>.Update
+			.Set("Content", entity.Content);
+
+		await _bookListCollection.UpdateOneAsync(updateFilter, updateBook);
+
+	}
+	public async Task UpdateAsync(string email, long isbn)
+	{
+		var updateFilter = Builders<UserBookListModel>.Filter.Eq("_id", email);
+		var updateBooksInList = Builders<UserBookListModel>.Update.Push("Content", isbn);
 
 		await _bookListCollection.UpdateOneAsync(updateFilter, updateBooksInList);
 	}
@@ -76,12 +87,6 @@ public class UserBookListRepository : IRepository<UserBookListDto>
 
 
 	public Task<UserBookListDto> GetAsync(long isbn)
-	{
-		throw new NotImplementedException();
-	}
-
-
-	public Task DeleteAsync(object id)
 	{
 		throw new NotImplementedException();
 	}

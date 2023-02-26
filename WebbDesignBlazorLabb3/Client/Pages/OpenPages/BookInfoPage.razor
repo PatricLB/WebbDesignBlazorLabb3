@@ -1,11 +1,9 @@
 ﻿@page "/Book/{ISBN}"
 @using WebbDesignBlazorLabb3.Shared;
 
-@inject HttpClient client;
+@inject HttpClient _client;
 @inject NavigationManager UriHelper
 
-<AuthorizeView>
-	<Authorized>
 <h3>@currentBook.Title</h3>
 
 <div class="m-4">
@@ -27,19 +25,24 @@
 	
 	</div>
 		<button type="Submit" class="btn btn-info m-2" @onclick="SendUserBack">Gå tillbaka</button>
-		<button type="Submit" class="btn btn-success m-2" @onclick="SendUserBack">Lägg till i din lista</button>
-	</Authorized>
-	<NotAuthorized>
-		@if (ISBN == null)
-		{	
-			<p> No book was loaded </p>
+	<AuthorizeView>
+		<Authorized>
+		@if (currentUserList.Content.Find(x => x == handeledIsbn) != handeledIsbn)
+		{
+			<button class="btn btn-success mt-2 mx-lg-2" @onclick="() => AddBookToList(handeledIsbn, email)">Lägg till i profil</button>
 		}
 		else
 		{
-			<p> You are not logged in! </p>
+			<p>Boken är i din lista!</p>
 		}
-	</NotAuthorized>
-</AuthorizeView>
+		</Authorized>
+		<NotAuthorized>
+			@if (ISBN == null)
+			{	
+				<p> No book was loaded </p>
+			}
+		</NotAuthorized>
+	</AuthorizeView>
 
 @code {
 	BookDto currentBook = new();
@@ -47,13 +50,22 @@
 	public string ISBN { get; set; }
 	public long handeledIsbn { get; set; }
 
+	[CascadingParameter]
+	private Task<AuthenticationState>? authenticationState { get; set; }
+
+	string? email = string.Empty;
+	AuthenticationState a;
+	UserBookListDto currentUserList = new();
+
 	protected override async Task OnInitializedAsync()
 	{
 		if(ISBN != null)
 		{
 			handeledIsbn = (long)Convert.ToInt64(ISBN);
 			currentBook.Isbn = handeledIsbn;
-			var fetchedBook = (await client.GetFromJsonAsync<BookDto>($"Book/getBook:{currentBook.Isbn}"));
+
+			var fetchedBook = (await _client.GetFromJsonAsync<BookDto>($"Book/getBook:{currentBook.Isbn}"));
+
 			currentBook.Title = fetchedBook.Title;
 			currentBook.Authors = fetchedBook.Authors;
 			currentBook.Description = fetchedBook.Description;
@@ -64,6 +76,37 @@
 		{
 			
 		}
+	}
+	protected override async Task OnParametersSetAsync()
+	{
+		a = await authenticationState;
+		if (a.User.Identity?.IsAuthenticated ?? false)
+		{
+			email = a.User.FindFirst(c => c.Type == "preferred_username")?.Value;
+			if (!string.IsNullOrEmpty(email))
+			{
+
+			}
+
+			await LoadList();
+		}
+
+	}
+
+	private async Task LoadList()
+	{
+		var fetchedList = (await _client.GetFromJsonAsync<UserBookListDto>($"/BookLists/GetList:{email}"));
+		currentUserList = fetchedList;
+	}
+
+	private async void AddBookToList(long isbn, string email)
+	{
+		if (currentUserList != null)
+		{
+			currentUserList.Content.Add(isbn);
+			await _client.PutAsJsonAsync("/BookLists/AddBookToList", currentUserList);
+		}
+
 	}
 
 
